@@ -11,8 +11,8 @@ use App\Http\Controllers\BusinessModelController;
 
 // الصفحة الرئيسية - Home Page
 Route::get('/', function () {
-    return view('home');
-})->name('home');
+    return view('index');
+})->name('index');
 
 // صفحة إدخال البيانات - Data Input Page
 Route::get('/input', [BusinessModelController::class, 'showInputForm'])
