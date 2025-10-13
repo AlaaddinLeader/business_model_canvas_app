@@ -211,8 +211,17 @@
       margin-top: 0;
     }
 
+    label.optional::after {
+      content: '(اختياري)';
+      font-size: 13px;
+      font-weight: 500;
+      color: #95a5a6;
+      margin-right: 8px;
+    }
+
     textarea,
     input[type="text"],
+    input[type="number"],
     select {
       width: 100%;
       padding: 14px 16px;
@@ -234,6 +243,7 @@
 
     textarea:focus,
     input[type="text"]:focus,
+    input[type="number"]:focus,
     select:focus {
       outline: none;
       border-color: #6D94C5;
@@ -242,7 +252,8 @@
     }
 
     textarea::placeholder,
-    input[type="text"]::placeholder {
+    input[type="text"]::placeholder,
+    input[type="number"]::placeholder {
       color: #95a5a6;
     }
 
@@ -291,6 +302,155 @@
     label:has(input[type="checkbox"]:checked) {
       border-color: #6D94C5;
       background: rgba(109, 148, 197, 0.1);
+    }
+
+    /* Resource Detail Fields */
+    .resource-detail {
+      margin: 12px 0 20px 40px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 2px dashed #E8DFCA;
+      border-radius: 10px;
+    }
+
+    .resource-detail label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #5a6c7d;
+      margin: 0 0 8px 0;
+    }
+
+    .resource-detail textarea {
+      min-height: 70px;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    /* Cost Table Styling */
+    .cost-table-container {
+      overflow-x: auto;
+      margin-top: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(109, 148, 197, 0.1);
+    }
+
+    table.cost-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table.cost-table thead {
+      background: linear-gradient(135deg, #6D94C5 0%, #5a7ba8 100%);
+    }
+
+    table.cost-table thead th {
+      padding: 16px 12px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: white;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    table.cost-table thead th:first-child {
+      border-right: none;
+    }
+
+    table.cost-table tbody tr {
+      transition: background 0.3s ease;
+    }
+
+    table.cost-table tbody tr:nth-child(even) {
+      background: rgba(203, 220, 235, 0.15);
+    }
+
+    table.cost-table tbody tr:hover {
+      background: rgba(109, 148, 197, 0.1);
+    }
+
+    table.cost-table tbody td {
+      padding: 12px;
+      border: 1px solid #E8DFCA;
+      text-align: center;
+    }
+
+    table.cost-table tbody td input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #E8DFCA;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Cairo', sans-serif;
+      background: white;
+      color: #2c3e50;
+      font-weight: 500;
+      text-align: center;
+      margin: 0;
+      transition: all 0.3s ease;
+    }
+
+    table.cost-table tbody td input:focus {
+      outline: none;
+      border-color: #6D94C5;
+      box-shadow: 0 0 0 3px rgba(109, 148, 197, 0.1);
+    }
+
+    table.cost-table tbody td.total-cell {
+      background: rgba(109, 148, 197, 0.08);
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 15px;
+    }
+
+    table.cost-table tfoot {
+      background: linear-gradient(135deg, #E8DFCA 0%, #d4c9b3 100%);
+    }
+
+    table.cost-table tfoot td {
+      padding: 16px 12px;
+      font-weight: 800;
+      font-size: 16px;
+      color: #2c3e50;
+      border: none;
+      text-align: center;
+    }
+
+    table.cost-table tfoot td:last-child {
+      color: #5a7ba8;
+      font-size: 18px;
+    }
+
+    .add-row-btn {
+      margin-top: 16px;
+      padding: 12px 24px;
+      background: white;
+      border: 2px solid #6D94C5;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Cairo', sans-serif;
+      color: #6D94C5;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-row-btn:hover {
+      background: #6D94C5;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(109, 148, 197, 0.3);
+    }
+
+    .add-row-btn::before {
+      content: '+';
+      font-size: 20px;
+      font-weight: 800;
     }
 
     /* Suggestion Buttons */
@@ -429,6 +589,24 @@
       button[type="reset"] {
         width: 100%;
       }
+
+      .cost-table-container {
+        font-size: 13px;
+      }
+
+      table.cost-table thead th {
+        padding: 12px 8px;
+        font-size: 13px;
+      }
+
+      table.cost-table tbody td {
+        padding: 8px 4px;
+      }
+
+      table.cost-table tbody td input {
+        padding: 8px 6px;
+        font-size: 13px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -447,6 +625,25 @@
 
       section > p {
         font-size: 14px;
+      }
+
+      .resource-detail {
+        margin-right: 20px;
+      }
+
+      table.cost-table thead th {
+        padding: 10px 6px;
+        font-size: 12px;
+      }
+
+      table.cost-table tbody td input {
+        padding: 6px 4px;
+        font-size: 12px;
+      }
+
+      .add-row-btn {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -485,12 +682,14 @@
       <section>
         <h2>الشريحة المستهدفة</h2>
         <p>من هم عملاؤك؟ حدد أعمارهم، منطقتهم، واهتماماتهم.</p>
-        <label>الفئة العمرية:</label>
+        <label class="optional">الفئة العمرية:</label>
         <select name="age_group">
-          <option>أطفال</option>
-          <option>شباب</option>
-          <option>بالغون</option>
-          <option>كبار السن</option>
+            <option value="">غير محدد</option>
+            <option>أطفال</option>
+            <option>شباب (في العشرينات من العمر)</option>
+            <option>كهول (مابين الثلاثين والخمسين من العمر)</option>
+            <option>كبار السن (فوق الخمسين)</option>
+            <option>جميع الأعمار</option>
         </select>
 
         <label>المنطقة الجغرافية:</label>
@@ -504,28 +703,28 @@
       </section>
 
       <!-- 3. العلاقات مع العملاء -->
-      <section>
-        <h2>العلاقات مع العملاء</h2>
-        <p>كيف تتعامل مع عملائك؟ هل هي خدمة ذاتية أم مساعدة شخصية؟</p>
-        <label><input type="radio" name="relationship" value="self_service"> خدمة ذاتية</label>
-        <label><input type="radio" name="relationship" value="personal_assist"> مساعدة شخصية</label>
-        <label><input type="radio" name="relationship" value="automated"> خدمة آلية</label>
-        <label><input type="radio" name="relationship" value="co_creation"> شراكة مع العميل</label>
-        <label><input type="radio" name="relationship" value="other"> أخرى:</label>
-        <input type="text" name="relationship_other" placeholder="اكتب هنا...">
-      </section>
+        <section>
+            <h2>العلاقات مع العملاء</h2>
+            <p>كيف تتعامل مع عملائك؟ هل هي خدمة ذاتية أم مساعدة شخصية؟</p>
+            <label><input type="radio" name="relationship" value="self_service"> خدمة ذاتية</label>
+            <label><input type="radio" name="relationship" value="personal_assist"> مساعدة شخصية</label>
+            <label><input type="radio" name="relationship" value="automated"> خدمة آلية</label>
+            <label><input type="radio" name="relationship" value="co_creation"> شراكة مع العميل</label>
+            <label><input type="radio" name="relationship" value="other"> أخرى:</label>
+            <input type="text" name="relationship_other" placeholder="اكتب هنا...">
+        </section>
 
-      <!-- 4. القنوات -->
-      <section>
-        <h2>القنوات</h2>
-        <p>كيف تصل إلى عملائك أو كيف يصلون إليك؟</p>
-        <label><input type="checkbox" name="channels" value="online_store"> متجر إلكتروني</label>
-        <label><input type="checkbox" name="channels" value="mobile_app"> تطبيق جوال</label>
-        <label><input type="checkbox" name="channels" value="physical_store"> متجر فعلي</label>
-        <label><input type="checkbox" name="channels" value="agents"> مندوبين أو وكلاء</label>
-        <label><input type="checkbox" name="channels" value="other"> أخرى:</label>
-        <input type="text" name="channel_other" placeholder="اكتب هنا...">
-      </section>
+        <!-- 4. القنوات -->
+        <section>
+            <h2>القنوات</h2>
+            <p>كيف تصل إلى عملائك أو كيف يصلون إليك؟</p>
+            <label><input type="checkbox" name="channels" value="online_store"> متجر إلكتروني</label>
+            <label><input type="checkbox" name="channels" value="mobile_app"> تطبيق جوال</label>
+            <label><input type="checkbox" name="channels" value="physical_store"> متجر فعلي</label>
+            <label><input type="checkbox" name="channels" value="agents"> مندوبين أو وكلاء</label>
+            <label><input type="checkbox" name="channels" value="other"> أخرى:</label>
+            <input type="text" name="channel_other" placeholder="اكتب هنا...">
+        </section>
 
       <!-- 5. الأنشطة الرئيسية -->
       <section>
@@ -545,18 +744,42 @@
       <section>
         <h2>الموارد الرئيسية</h2>
         <p>ما الموارد التي تحتاجها لتشغيل عملك؟</p>
+
         <label><input type="checkbox" name="resources" value="human"> بشرية</label>
+        <div class="resource-detail">
+          <label>تفاصيل الموارد البشرية:</label>
+          <textarea name="human_details" placeholder="مثال: محاسب، خبير تصنيع، 10 عمال..."></textarea>
+        </div>
+
         <label><input type="checkbox" name="resources" value="financial"> مالية</label>
+        <div class="resource-detail">
+          <label>تفاصيل الموارد المالية:</label>
+          <textarea name="financial_details" placeholder="مثال: رأس مال، قروض، استثمارات..."></textarea>
+        </div>
+
         <label><input type="checkbox" name="resources" value="technical"> تقنية</label>
+        <div class="resource-detail">
+          <label>تفاصيل الموارد التقنية:</label>
+          <textarea name="technical_details" placeholder="مثال: كمبيوتر، هاتف خدمة العملاء، برمجيات..."></textarea>
+        </div>
+
         <label><input type="checkbox" name="resources" value="equipment"> معدات</label>
-        <label><input type="checkbox" name="resources" value="other"> أخرى:</label>
-        <input type="text" name="resource_other" placeholder="اكتب هنا...">
+        <div class="resource-detail">
+          <label>تفاصيل المعدات:</label>
+          <textarea name="equipment_details" placeholder="مثال: آلات، أدوات، مركبات..."></textarea>
+        </div>
+
+        <label><input type="checkbox" name="resources" value="other"> أخرى</label>
+        <div class="resource-detail">
+          <label>تفاصيل الموارد الأخرى:</label>
+          <textarea name="resource_other_details" placeholder="اكتب هنا..."></textarea>
+        </div>
       </section>
 
       <!-- 7. الشراكات الرئيسية -->
       <section>
         <h2>الشراكات الرئيسية</h2>
-        <p>من هم شركاؤك الذين يساعدونك في عملك؟</p>
+        <p>من هي الشركات والأفراد الذين تحتاج شركتك للعمل معهم لإنجاز أنشطتها؟</p>
         <textarea name="key_partners" rows="3" placeholder="اكتب هنا..."></textarea>
       </section>
 
@@ -576,7 +799,57 @@
       <section>
         <h2>هيكل التكلفة</h2>
         <p>ما هي التكاليف الأساسية لتشغيل المشروع؟</p>
-        <textarea name="cost_structure" rows="4" placeholder="اكتب هنا..."></textarea>
+
+        <label>العملة:</label>
+        <select id="currencySelect" name="currency">
+          <option value="$">دولار أمريكي ($)</option>
+          <option value="₺">ليرة تركية (₺)</option>
+          <option value="ل.س">ليرة سورية (ل.س)</option>
+        </select>
+
+        <div class="cost-table-container">
+          <table class="cost-table">
+            <thead>
+              <tr>
+                <th>نوع المصروف</th>
+                <th>الوصف</th>
+                <th>التكلفة (<span class="currency-symbol">$</span>)</th>
+                <th>الكمية</th>
+                <th>المجموع (<span class="currency-symbol">$</span>)</th>
+              </tr>
+            </thead>
+            <tbody id="costTableBody">
+              <tr>
+                <td><input type="text" placeholder="مثال: مواد خام" name="expense_type_1"></td>
+                <td><input type="text" placeholder="..." name="expense_desc_1"></td>
+                <td><input type="text" inputmode="decimal" placeholder="۰" name="expense_cost_1" class="cost-input" data-row="1"></td>
+                <td><input type="text" inputmode="numeric" placeholder="۰" name="expense_qty_1" class="qty-input" data-row="1"></td>
+                <td class="total-cell"><span class="row-total" data-row="1">۰</span></td>
+              </tr>
+              <tr>
+                <td><input type="text" placeholder="مثال: أجور عمالة" name="expense_type_2"></td>
+                <td><input type="text" placeholder="..." name="expense_desc_2"></td>
+                <td><input type="text" inputmode="decimal" placeholder="۰" name="expense_cost_2" class="cost-input" data-row="2"></td>
+                <td><input type="text" inputmode="numeric" placeholder="۰" name="expense_qty_2" class="qty-input" data-row="2"></td>
+                <td class="total-cell"><span class="row-total" data-row="2">۰</span></td>
+              </tr>
+              <tr>
+                <td><input type="text" placeholder="مثال: إيجار" name="expense_type_3"></td>
+                <td><input type="text" placeholder="..." name="expense_desc_3"></td>
+                <td><input type="text" inputmode="decimal" placeholder="۰" name="expense_cost_3" class="cost-input" data-row="3"></td>
+                <td><input type="text" inputmode="numeric" placeholder="۰" name="expense_qty_3" class="qty-input" data-row="3"></td>
+                <td class="total-cell"><span class="row-total" data-row="3">۰</span></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" style="text-align: left;">المجموع الكلي</td>
+                <td id="grandTotal">۰</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <button type="button" class="add-row-btn" onclick="addCostRow()">إضافة صف جديد</button>
       </section>
 
       <!-- Buttons -->
@@ -587,6 +860,117 @@
 
     </form>
   </main>
+
+  <script>
+    let rowCounter = 3;
+
+    // Convert Western numerals to Arabic-Indic numerals
+    function toArabicNumerals(str) {
+      const arabicNumerals = ['۰', '۱', '۲', '۳', '٤', '٥', '٦', '٧', '۸', '۹'];
+      return str.toString().replace(/[0-9]/g, function(w) {
+        return arabicNumerals[+w];
+      });
+    }
+
+    // Convert Arabic-Indic numerals to Western numerals for calculations
+    function toWesternNumerals(str) {
+      const arabicToWestern = {
+        '۰': '0', '۱': '1', '۲': '2', '۳': '3', '٤': '4',
+        '٥': '5', '٦': '6', '٧': '7', '۸': '8', '۹': '9'
+      };
+      return str.replace(/[۰۱۲۳٤٥٦٧۸۹]/g, function(w) {
+        return arabicToWestern[w];
+      });
+    }
+
+    // Format number input to Arabic numerals
+    function formatArabicNumber(input) {
+      let value = input.value;
+      // Convert to Western for validation
+      let westernValue = toWesternNumerals(value);
+      // Keep only numbers and decimal point
+      westernValue = westernValue.replace(/[^\d.]/g, '');
+      // Ensure only one decimal point
+      const parts = westernValue.split('.');
+      if (parts.length > 2) {
+        westernValue = parts[0] + '.' + parts.slice(1).join('');
+      }
+      // Convert back to Arabic numerals for display
+      input.value = toArabicNumerals(westernValue);
+    }
+
+    // Update currency symbol
+    function updateCurrencySymbol() {
+      const select = document.getElementById('currencySelect');
+      const symbol = select.value;
+      document.querySelectorAll('.currency-symbol').forEach(el => {
+        el.textContent = symbol;
+      });
+    }
+
+    // Calculate row total and grand total
+    function calculateTotals() {
+      let grandTotal = 0;
+
+      document.querySelectorAll('.cost-input').forEach(input => {
+        const row = input.getAttribute('data-row');
+        const costInput = document.querySelector(`.cost-input[data-row="${row}"]`);
+        const qtyInput = document.querySelector(`.qty-input[data-row="${row}"]`);
+        const totalSpan = document.querySelector(`.row-total[data-row="${row}"]`);
+
+        // Convert Arabic numerals to Western for calculation
+        const costValue = toWesternNumerals(costInput.value);
+        const qtyValue = toWesternNumerals(qtyInput.value);
+
+        const cost = parseFloat(costValue) || 0;
+        const qty = parseFloat(qtyValue) || 0;
+        const rowTotal = cost * qty;
+
+        // Display in Arabic numerals
+        totalSpan.textContent = toArabicNumerals(rowTotal.toFixed(2));
+        grandTotal += rowTotal;
+      });
+
+      // Display grand total in Arabic numerals
+      document.getElementById('grandTotal').textContent = toArabicNumerals(grandTotal.toFixed(2));
+    }
+
+    // Add new row to cost table
+    function addCostRow() {
+      rowCounter++;
+      const tbody = document.getElementById('costTableBody');
+      const newRow = document.createElement('tr');
+
+      newRow.innerHTML = `
+        <td><input type="text" placeholder="نوع المصروف" name="expense_type_${rowCounter}"></td>
+        <td><input type="text" placeholder="..." name="expense_desc_${rowCounter}"></td>
+        <td><input type="text" inputmode="decimal" placeholder="۰" name="expense_cost_${rowCounter}" class="cost-input" data-row="${rowCounter}"></td>
+        <td><input type="text" inputmode="numeric" placeholder="۰" name="expense_qty_${rowCounter}" class="qty-input" data-row="${rowCounter}"></td>
+        <td class="total-cell"><span class="row-total" data-row="${rowCounter}">۰</span></td>
+      `;
+
+      tbody.appendChild(newRow);
+      attachCalculationListeners(newRow);
+    }
+
+    // Attach event listeners to cost and quantity inputs
+    function attachCalculationListeners(container) {
+      container.querySelectorAll('.cost-input, .qty-input').forEach(input => {
+        input.addEventListener('input', function() {
+          formatArabicNumber(this);
+          calculateTotals();
+        });
+      });
+    }
+
+    // Initialize calculation listeners on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      attachCalculationListeners(document);
+
+      // Add currency change listener
+      document.getElementById('currencySelect').addEventListener('change', updateCurrencySymbol);
+    });
+  </script>
 
 </body>
 </html>
