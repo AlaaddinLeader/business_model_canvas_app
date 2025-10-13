@@ -646,6 +646,17 @@
         justify-content: center;
       }
     }
+    .cost-table td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    }
+
+/* Force LTR for numeric cells to prevent decimal point reversal */
+.total-cell,
+#grandTotal {
+    direction: ltr;
+    text-align: right;
+    }
   </style>
 </head>
 <body>
