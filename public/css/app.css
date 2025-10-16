@@ -1,0 +1,372 @@
+/* ================================================
+   APP.CSS - App Layout Specific Styles
+   Import main.css before this file
+   ================================================ */
+
+/* ===== Body Override for App Layout ===== */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+/* ===== App Header - Single Combined Bar ===== */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--color-surface-alt);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(109, 148, 197, 0.15);
+    animation: fadeInDown 0.6s var(--transition-smooth);
+}
+
+.app-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg) var(--spacing-4xl);
+    gap: var(--spacing-xl);
+}
+
+/* ===== Logo ===== */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-shrink: 0;
+}
+
+.logo-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(109, 148, 197, 0.35);
+    transition: all var(--transition-smooth);
+}
+
+.logo-icon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 28px rgba(109, 148, 197, 0.45);
+}
+
+.logo-icon svg {
+    width: 30px;
+    height: 30px;
+    fill: white;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.5px;
+}
+
+/* ===== Navigation Menu - Now in Header ===== */
+.app-navigation {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+    justify-content: center;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 12px var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-semibold);
+    font-size: 15px;
+    transition: all var(--transition-smooth);
+    position: relative;
+    text-decoration: none;
+}
+
+.nav-link svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    transition: all var(--transition-smooth);
+}
+
+.nav-link:hover {
+    color: var(--color-primary);
+    background: rgba(109, 148, 197, 0.08);
+    transform: translateY(-2px);
+}
+
+.nav-link.active {
+    color: var(--color-primary);
+    background: rgba(109, 148, 197, 0.12);
+    font-weight: var(--font-weight-bold);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border-radius: 2px 2px 0 0;
+}
+
+/* ===== Header Actions ===== */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-shrink: 0;
+}
+
+/* ===== User Info ===== */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 12px var(--spacing-lg);
+    background: white;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-xl);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+    font-size: 15px;
+}
+
+.user-info svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+}
+
+/* ===== Logout Form & Button ===== */
+.logout-form {
+    margin: 0;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 12px var(--spacing-lg);
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    font-size: 15px;
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.logout-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform var(--transition-bounce);
+}
+
+.logout-btn:hover::before {
+    transform: translateX(100%);
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.logout-btn:active {
+    transform: translateY(-1px);
+}
+
+.logout-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+}
+
+/* ===== Main Content Area ===== */
+.app-main {
+    flex: 1;
+    position: relative;
+    z-index: var(--z-content);
+    padding: var(--spacing-4xl) 0;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-4xl);
+    animation: fadeInUp 0.6s var(--transition-smooth);
+}
+
+/* ===== Alert Messages ===== */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-xl);
+    font-weight: var(--font-weight-semibold);
+    animation: fadeInDown 0.5s var(--transition-smooth);
+}
+
+.alert svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.alert-success {
+    background: rgba(46, 204, 113, 0.1);
+    border: var(--border-width) solid #2ecc71;
+    color: #27ae60;
+}
+
+.alert-success svg {
+    fill: #2ecc71;
+}
+
+.alert-error {
+    background: rgba(231, 76, 60, 0.1);
+    border: var(--border-width) solid #e74c3c;
+    color: #c0392b;
+}
+
+.alert-error svg {
+    fill: #e74c3c;
+}
+
+.alert-error > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1200px) {
+    .app-header-container {
+        padding: var(--spacing-lg) var(--spacing-xl);
+    }
+
+    .logo-text {
+        font-size: 20px;
+    }
+
+    .nav-link {
+        padding: 10px var(--spacing-md);
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .app-header-container {
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+    }
+
+    .logo {
+        order: 1;
+    }
+
+    .header-actions {
+        order: 2;
+    }
+
+    .app-navigation {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        padding-top: var(--spacing-md);
+        border-top: 1px solid rgba(232, 223, 202, 0.5);
+    }
+
+    .app-container {
+        padding: 0 var(--spacing-xl);
+    }
+}
+
+@media (max-width: 768px) {
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .nav-link span {
+        display: none;
+    }
+
+    .nav-link {
+        padding: 12px;
+        justify-content: center;
+    }
+
+    .nav-link svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .app-container {
+        padding: 0 var(--spacing-md);
+    }
+
+    .app-main {
+        padding: var(--spacing-xl) 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        display: none;
+    }
+
+    .logo-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .logo-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .user-info,
+    .logout-btn {
+        padding: 10px var(--spacing-md);
+        font-size: 14px;
+    }
+
+    .user-info span {
+        display: none;
+    }
+
+    .logout-btn span {
+        display: none;
+    }
+
+    .app-navigation {
+        gap: var(--spacing-xs);
+    }
+}

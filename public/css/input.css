@@ -1,0 +1,410 @@
+/* ================================================
+   LOGIN.CSS - Login Page Specific Styles
+   Import main.css before this file
+   ================================================ */
+
+/* ===== Body Display Override ===== */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+}
+
+/* ===== Background Shapes for Login Page ===== */
+.background-shapes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: var(--z-background);
+    pointer-events: none;
+}
+
+.shape {
+    position: absolute;
+    opacity: 0.08;
+}
+
+.shape1 {
+    width: 300px;
+    height: 300px;
+    background: var(--color-primary);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    top: 10%;
+    left: 5%;
+    animation: float 20s infinite ease-in-out;
+}
+
+.shape2 {
+    width: 200px;
+    height: 200px;
+    background: var(--color-secondary);
+    border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    bottom: 15%;
+    right: 10%;
+    animation: float 15s infinite ease-in-out reverse;
+}
+
+/* ===== Login Container ===== */
+.login-container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: var(--color-surface);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-4xl);
+    padding: var(--spacing-3xl) var(--spacing-2xl);
+    box-shadow:
+        0 30px 90px rgba(109, 148, 197, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.5);
+    animation: fadeInUp var(--transition-smooth);
+    z-index: var(--z-content);
+    margin: auto;
+}
+
+/* ===== Logo ===== */
+.logo {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.logo-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border-radius: var(--radius-3xl);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 12px 40px rgba(109, 148, 197, 0.4),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+.logo-icon svg {
+    width: 38px;
+    height: 38px;
+    fill: white;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== Greeting Section ===== */
+.greeting {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.greeting h1 {
+    font-size: 26px;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.5px;
+}
+
+.greeting p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+}
+
+/* ===== Input Groups ===== */
+.input-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-size: 15px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-tertiary);
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    right: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    fill: var(--color-primary);
+    pointer-events: none;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 48px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-xl);
+    font-size: 15px;
+    font-family: var(--font-family);
+    transition: all var(--transition-smooth);
+    background: white;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-normal);
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(109, 148, 197, 0.12);
+    transform: translateY(-2px);
+}
+
+.input-wrapper input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* ===== Password Toggle ===== */
+.password-toggle {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    fill: var(--color-primary);
+    transition: all var(--transition-fast);
+}
+
+.password-toggle:hover {
+    fill: var(--color-primary-dark);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* ===== Options (Remember Me & Forgot Password) ===== */
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2xl);
+    font-size: 14px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    cursor: pointer;
+    color: var(--color-text-tertiary);
+    font-weight: var(--font-weight-semibold);
+}
+
+.remember-me input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+    border-radius: 6px;
+}
+
+.forgot-password {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-bold);
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.forgot-password::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width var(--transition-fast);
+}
+
+.forgot-password:hover::after {
+    width: 100%;
+}
+
+.forgot-password:hover {
+    color: var(--color-primary-dark);
+}
+
+/* ===== Login Button ===== */
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    font-size: 16px;
+    font-weight: var(--font-weight-extrabold);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform var(--transition-bounce);
+}
+
+.login-btn:hover::before {
+    transform: translateX(100%);
+}
+
+.login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+}
+
+.login-btn:active {
+    transform: translateY(-1px);
+}
+
+/* ===== Divider ===== */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: var(--spacing-xl) 0;
+    color: var(--color-text-light);
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: var(--border-width);
+    background: linear-gradient(to left, var(--border-color), transparent);
+}
+
+.divider::after {
+    background: linear-gradient(to right, var(--border-color), transparent);
+}
+
+.divider span {
+    padding: 0 var(--spacing-lg);
+}
+
+/* ===== Google Sign-in Button ===== */
+.google-btn {
+    width: 100%;
+    padding: 14px;
+    background: white;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-xl);
+    font-size: 15px;
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    color: var(--color-text-primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.google-btn:hover {
+    border-color: var(--color-primary);
+    background: var(--color-background);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.google-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* ===== Signup Section ===== */
+.signup-section {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-semibold);
+}
+
+.signup-section a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-extrabold);
+    margin-right: 6px;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.signup-section a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transition: transform var(--transition-fast);
+}
+
+.signup-section a:hover::after {
+    transform: scaleX(1);
+}
+
+.signup-section a:hover {
+    color: var(--color-primary-dark);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 480px) {
+    .login-container {
+        padding: var(--spacing-2xl) 24px;
+    }
+
+    .greeting h1 {
+        font-size: 24px;
+    }
+
+    .logo-icon {
+        width: 65px;
+        height: 65px;
+    }
+
+    .logo-icon svg {
+        width: 35px;
+        height: 35px;
+    }
+}

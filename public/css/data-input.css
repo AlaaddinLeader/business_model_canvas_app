@@ -1,0 +1,549 @@
+/* ================================================
+   BUSINESS-MODEL-INPUT.CSS - Business Model Canvas Input Page Specific Styles
+   Import main.css before this file
+   ================================================ */
+
+/* ===== REMOVED: Body override that was causing the width issue ===== */
+/* This was conflicting with app.css layout */
+
+
+
+/* ===== Main Content ===== */
+main {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: var(--z-content);
+}
+
+/* ===== Form ===== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ===== Sections ===== */
+section {
+    background: var(--color-surface);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-3xl);
+    padding: 32px;
+    box-shadow: 0 12px 40px rgba(109, 148, 197, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: both;
+}
+
+section:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+section:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+section:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+section:nth-child(4) {
+    animation-delay: 0.25s;
+}
+
+section:nth-child(5) {
+    animation-delay: 0.3s;
+}
+
+section:nth-child(6) {
+    animation-delay: 0.35s;
+}
+
+section:nth-child(7) {
+    animation-delay: 0.4s;
+}
+
+section:nth-child(8) {
+    animation-delay: 0.45s;
+}
+
+section:nth-child(9) {
+    animation-delay: 0.5s;
+}
+
+section h2 {
+    font-size: 22px;
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+section h2::before {
+    content: '';
+    width: 6px;
+    height: 24px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border-radius: 3px;
+}
+
+section>p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.7;
+    font-weight: var(--font-weight-normal);
+}
+
+/* ===== Form Elements Override for this page ===== */
+label {
+    display: block;
+    font-size: 15px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-tertiary);
+    margin-bottom: 8px;
+    margin-top: 16px;
+}
+
+label:first-of-type {
+    margin-top: 0;
+}
+
+label.optional::after {
+    content: '(اختياري)';
+    font-size: 13px;
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-muted);
+    margin-right: 8px;
+}
+
+textarea,
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 14px 16px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: 15px;
+    font-family: var(--font-family);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    background: white;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-normal);
+    margin-bottom: 12px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(109, 148, 197, 0.12);
+    transform: translateY(-2px);
+}
+
+textarea::placeholder,
+input[type="text"]::placeholder,
+input[type="number"]::placeholder {
+    color: var(--color-text-muted);
+}
+
+select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236D94C5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 12px center;
+    background-size: 20px;
+    padding-left: 40px;
+}
+
+/* ===== Radio and Checkbox Styling Override ===== */
+label input[type="radio"],
+label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+label:has(input[type="radio"]),
+label:has(input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: var(--font-weight-semibold);
+}
+
+label:has(input[type="radio"]):hover,
+label:has(input[type="checkbox"]):hover {
+    border-color: var(--color-primary);
+    background: rgba(109, 148, 197, 0.05);
+    transform: translateX(-3px);
+}
+
+label:has(input[type="radio"]:checked),
+label:has(input[type="checkbox"]:checked) {
+    border-color: var(--color-primary);
+    background: rgba(109, 148, 197, 0.1);
+}
+
+/* ===== Resource Detail Fields ===== */
+.resource-detail {
+    margin: 12px 0 20px 40px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border: var(--border-width) dashed var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.resource-detail label {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    margin: 0 0 8px 0;
+}
+
+.resource-detail textarea {
+    min-height: 70px;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ===== Cost Table Styling ===== */
+.cost-table-container {
+    overflow-x: auto;
+    margin-top: 16px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 15px rgba(109, 148, 197, 0.1);
+}
+
+table.cost-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+table.cost-table thead {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+table.cost-table thead th {
+    padding: 16px 12px;
+    text-align: center;
+    font-weight: var(--font-weight-extrabold);
+    font-size: 15px;
+    color: white;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+table.cost-table thead th:first-child {
+    border-right: none;
+}
+
+table.cost-table tbody tr {
+    transition: background 0.3s ease;
+}
+
+table.cost-table tbody tr:nth-child(even) {
+    background: rgba(203, 220, 235, 0.15);
+}
+
+table.cost-table tbody tr:hover {
+    background: rgba(109, 148, 197, 0.1);
+}
+
+table.cost-table tbody td {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+table.cost-table tbody td input {
+    width: 100%;
+    padding: 10px 12px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: var(--font-family);
+    background: white;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-normal);
+    text-align: center;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+table.cost-table tbody td input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(109, 148, 197, 0.1);
+}
+
+table.cost-table tbody td.total-cell {
+    background: rgba(109, 148, 197, 0.08);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    font-size: 15px;
+    direction: ltr;
+    text-align: right;
+}
+
+table.cost-table tfoot {
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark) 100%);
+}
+
+table.cost-table tfoot td {
+    padding: 16px 12px;
+    font-weight: var(--font-weight-extrabold);
+    font-size: 16px;
+    color: var(--color-text-primary);
+    border: none;
+    text-align: center;
+}
+
+table.cost-table tfoot td:last-child {
+    color: var(--color-primary-dark);
+    font-size: 18px;
+    direction: ltr;
+    text-align: right;
+}
+
+/* ===== Add Row Button ===== */
+.add-row-btn {
+    margin-top: 16px;
+    padding: 12px 24px;
+    background: white;
+    border: var(--border-width) solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family);
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.add-row-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(109, 148, 197, 0.3);
+}
+
+.add-row-btn::before {
+    content: '+';
+    font-size: 20px;
+    font-weight: var(--font-weight-extrabold);
+}
+
+/* ===== Suggestion Buttons ===== */
+section>div {
+    margin-top: 16px;
+}
+
+section>div p {
+    font-size: 14px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-tertiary);
+    margin-bottom: 12px;
+}
+
+section>div button[type="button"] {
+    display: inline-block;
+    padding: 10px 18px;
+    background: white;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 6px 10px 0;
+}
+
+section>div button[type="button"]:hover {
+    border-color: var(--color-primary);
+    background: var(--color-background);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(109, 148, 197, 0.2);
+}
+
+section>div button[type="button"]:active {
+    transform: translateY(0);
+}
+
+/* ===== Form Action Buttons ===== */
+form>div:last-child {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    animation-delay: 0.6s;
+    animation-fill-mode: both;
+}
+
+button[type="submit"],
+button[type="reset"] {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius-xl);
+    font-size: 17px;
+    font-weight: var(--font-weight-extrabold);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+button[type="submit"] {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    box-shadow: 0 12px 35px rgba(109, 148, 197, 0.4);
+}
+
+button[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+button[type="submit"]:hover::before {
+    transform: translateX(100%);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 45px rgba(109, 148, 197, 0.5);
+}
+
+button[type="reset"] {
+    background: white;
+    color: var(--color-text-primary);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+button[type="reset"]:hover {
+    border-color: var(--color-primary);
+    background: var(--color-background);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(109, 148, 197, 0.2);
+}
+
+button[type="submit"]:active,
+button[type="reset"]:active {
+    transform: translateY(-1px);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 24px;
+        padding: 20px 24px;
+    }
+
+    section {
+        padding: 24px 20px;
+    }
+
+    section h2 {
+        font-size: 20px;
+    }
+
+    form>div:last-child {
+        flex-direction: column;
+    }
+
+    button[type="submit"],
+    button[type="reset"] {
+        width: 100%;
+    }
+
+    .cost-table-container {
+        font-size: 13px;
+    }
+
+    table.cost-table thead th {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+
+    table.cost-table tbody td {
+        padding: 8px 4px;
+    }
+
+    table.cost-table tbody td input {
+        padding: 8px 6px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 20px;
+        padding: 16px 20px;
+    }
+
+    section {
+        padding: 20px 16px;
+    }
+
+    section h2 {
+        font-size: 18px;
+    }
+
+    section>p {
+        font-size: 14px;
+    }
+
+    .resource-detail {
+        margin-right: 20px;
+    }
+
+    table.cost-table thead th {
+        padding: 10px 6px;
+        font-size: 12px;
+    }
+
+    table.cost-table tbody td input {
+        padding: 6px 4px;
+        font-size: 12px;
+    }
+
+    .add-row-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
