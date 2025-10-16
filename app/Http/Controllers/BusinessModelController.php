@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\DB;
 class BusinessModelController extends Controller
 {
     public function index(){
-        return view('data-input');
+        return view('pages/data-input');
     }
     /**
      * عرض صفحة الإدخال
      */
     public function showInputForm()
     {
-        return view('input');
+        return view('pages/input');
     }
 
     /**
@@ -84,26 +84,9 @@ class BusinessModelController extends Controller
     /**
      * عرض نموذج الأعمال
      */
-    public function displayBusinessModel($id)
+    public function displayBusinessModel()
     {
-        try {
-            // جلب نموذج الأعمال مع العلاقات
-            $businessModel = BusinessModel::with(['project', 'blocks'])
-                                         ->findOrFail($id);
-
-            // تنظيم البيانات للعرض
-            $blocks = $businessModel->blocks->pluck('block_content', 'block_name')->toArray();
-
-            return view('display', [
-                'project' => $businessModel->project,
-                'businessModel' => $businessModel,
-                'blocks' => $blocks
-            ]);
-
-        } catch (\Exception $e) {
-            return redirect()->route('home')
-                           ->with('error', 'لم يتم العثور على النموذج المطلوب');
-        }
+        return view('pages/display');
     }
 
     /**
