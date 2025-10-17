@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libpq-dev
+    libpq-dev \
+    nginx
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
+# Install PHP extensions (this is crucial!)
 RUN docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 
 # Get latest Composer
@@ -30,6 +31,7 @@ COPY . /var/www
 RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions
+RUN chown -R www-data:www-data /var/www
 RUN chmod -R 775 storage bootstrap/cache
 
 # Expose port
