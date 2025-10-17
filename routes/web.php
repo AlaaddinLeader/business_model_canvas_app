@@ -22,9 +22,9 @@ Route::get('/app', function () {
 })->middleware('auth')->name('app');
 
 // Home route (for authenticated users accessing from app layout)
-Route::get('/home', function () {
-    return view('pages/index');
-})->middleware('auth')->name('home');
+// Route::get('/home', function () {
+//     return view('pages/index');
+// })->middleware('auth')->name('home');
 
 /*
 |--------------------------------------------------------------------------
@@ -56,8 +56,8 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::middleware('auth')->group(function () {
     // صفحة إدخال البيانات - Data Input Page (News)
-    Route::get('/news', [BusinessModelController::class, 'index'])
-        ->name('index');
+    // Route::get('/news', [BusinessModelController::class, 'index'])
+    //     ->name('index');
 
     // صفحة حول - Data Input Form
     Route::get('/data-input', [BusinessModelController::class, 'index'])
