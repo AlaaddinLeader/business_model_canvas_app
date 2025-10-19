@@ -318,11 +318,13 @@ body {
         flex-wrap: nowrap;
         padding: var(--spacing-sm) var(--spacing-md);
         gap: var(--spacing-sm);
+        justify-content: space-between;
     }
 
     /* Logo - Compact version */
     .logo {
         gap: var(--spacing-xs);
+        flex-shrink: 0;
     }
 
     .logo-icon {
@@ -339,57 +341,43 @@ body {
         font-size: 16px;
     }
 
-    /* Hide navigation on mobile - Show hamburger menu instead */
+    /* Navigation - Icon only on mobile */
     .app-navigation {
-        position: fixed;
-        top: 72px;
-        left: 0;
-        right: 0;
-        background: var(--color-surface-alt);
-        backdrop-filter: blur(20px);
-        flex-direction: column;
-        padding: var(--spacing-md);
+        flex: 0;
         gap: var(--spacing-xs);
-        box-shadow: 0 8px 24px rgba(109, 148, 197, 0.2);
-        transform: translateY(-120%);
-        opacity: 0;
-        transition: all var(--transition-smooth);
-        z-index: calc(var(--z-header) - 1);
-        max-height: calc(100vh - 72px);
-        overflow-y: auto;
-    }
-
-    .app-navigation.mobile-menu-open {
-        transform: translateY(0);
-        opacity: 1;
+        justify-content: center;
     }
 
     .nav-link {
-        width: 100%;
-        padding: var(--spacing-md);
-        justify-content: flex-start;
-        border-radius: var(--radius-lg);
+        padding: 10px;
+        min-width: 44px;
+        justify-content: center;
     }
 
     .nav-link span {
-        display: inline;
+        display: none;
     }
 
     .nav-link svg {
         width: 22px;
         height: 22px;
+        margin: 0;
     }
 
-    /* Header actions - Compact */
+    .nav-link.active::after {
+        width: 60%;
+    }
+
+    /* Header actions - Icon only */
     .header-actions {
-        gap: var(--spacing-sm);
-        margin-left: auto;
+        gap: var(--spacing-xs);
+        flex-shrink: 0;
     }
 
     .user-info {
-        padding: 8px var(--spacing-sm);
+        padding: 10px;
+        min-width: 44px;
         font-size: 0;
-        min-width: auto;
     }
 
     .user-info svg {
@@ -403,9 +391,9 @@ body {
     }
 
     .logout-btn {
-        padding: 8px var(--spacing-sm);
+        padding: 10px;
+        min-width: 44px;
         font-size: 0;
-        min-width: auto;
     }
 
     .logout-btn svg {
@@ -416,43 +404,6 @@ body {
 
     .logout-btn span {
         display: none;
-    }
-
-    /* Mobile menu toggle button */
-    .mobile-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        background: var(--color-primary);
-        border: none;
-        border-radius: var(--radius-lg);
-        cursor: pointer;
-        transition: all var(--transition-smooth);
-        box-shadow: 0 4px 12px rgba(109, 148, 197, 0.3);
-        order: -1;
-        margin-right: var(--spacing-sm);
-    }
-
-    .mobile-menu-toggle:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(109, 148, 197, 0.4);
-    }
-
-    .mobile-menu-toggle:active {
-        transform: scale(0.95);
-    }
-
-    .mobile-menu-toggle svg {
-        width: 24px;
-        height: 24px;
-        fill: white;
-        transition: transform var(--transition-smooth);
-    }
-
-    .mobile-menu-toggle.active svg {
-        transform: rotate(90deg);
     }
 
     /* Main content adjustments */
@@ -479,8 +430,10 @@ body {
 @media (max-width: 480px) {
     .app-header-container {
         padding: var(--spacing-sm);
+        gap: 6px;
     }
 
+    /* Hide logo text completely */
     .logo-text {
         display: none;
     }
@@ -495,40 +448,43 @@ body {
         height: 20px;
     }
 
-    .mobile-menu-toggle {
-        width: 40px;
-        height: 40px;
+    /* Compact navigation */
+    .app-navigation {
+        gap: 4px;
     }
 
-    .mobile-menu-toggle svg {
-        width: 22px;
-        height: 22px;
+    .nav-link {
+        padding: 8px;
+        min-width: 40px;
+        border-radius: var(--radius-md);
+    }
+
+    .nav-link svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Compact header actions */
+    .header-actions {
+        gap: 4px;
     }
 
     .user-info,
     .logout-btn {
         width: 40px;
         height: 40px;
+        min-width: 40px;
         padding: 0;
         display: flex;
         align-items: center;
         justify-content: center;
+        border-radius: var(--radius-lg);
     }
 
     .user-info svg,
     .logout-btn svg {
         width: 18px;
         height: 18px;
-    }
-
-    .app-navigation {
-        top: 60px;
-        max-height: calc(100vh - 60px);
-    }
-
-    .nav-link {
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-size: 15px;
     }
 
     .app-main {
@@ -549,19 +505,8 @@ body {
 
 @media (max-width: 360px) {
     .app-header-container {
-        padding: 8px;
-        gap: 6px;
-    }
-
-    .header-actions {
-        gap: 6px;
-    }
-
-    .mobile-menu-toggle,
-    .user-info,
-    .logout-btn {
-        width: 36px;
-        height: 36px;
+        padding: 8px 6px;
+        gap: 4px;
     }
 
     .logo-icon {
@@ -573,11 +518,59 @@ body {
         width: 18px;
         height: 18px;
     }
+
+    .app-navigation {
+        gap: 3px;
+    }
+
+    .nav-link {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        padding: 0;
+    }
+
+    .nav-link svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .header-actions {
+        gap: 3px;
+    }
+
+    .user-info,
+    .logout-btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+    }
+
+    .user-info svg,
+    .logout-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .app-container {
+        padding: 0 var(--spacing-sm);
+    }
 }
 
-/* Desktop-only: Hide mobile menu toggle */
-@media (min-width: 769px) {
-    .mobile-menu-toggle {
-        display: none;
+/* Tablet landscape optimization */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .nav-link {
+        padding: 8px var(--spacing-sm);
+        font-size: 13px;
+    }
+
+    .user-info,
+    .logout-btn {
+        padding: 8px var(--spacing-sm);
+        font-size: 13px;
     }
 }
