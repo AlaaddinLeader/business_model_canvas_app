@@ -83,7 +83,7 @@
             </div>
         </div>
     </div>
-            <button class="nav-btn" onclick="window.location.href='{{ route('data-input') }}'">إدخال البيانات</button>
-            <button class="nav-btn" onclick="window.location.href='{{ route('display') }}'">عرض النموذج</button>
+            {{-- <button class="nav-btn" onclick="window.location.href='{{ route('data-input') }}'">إدخال البيانات</button>
+            <button class="nav-btn" onclick="window.location.href='{{ route('display') }}'">عرض النموذج</button> --}}
 </body>
 </html>
