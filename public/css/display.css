@@ -67,6 +67,147 @@ body {
     z-index: var(--z-content);
 }
 
+/* ===== Success Message Alert ===== */
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: var(--border-width) solid #c3e6cb;
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    color: #155724;
+    font-weight: var(--font-weight-semibold);
+    font-size: 15px;
+    box-shadow: var(--shadow-sm);
+    animation: fadeInDown 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert-success::before {
+    content: '✓';
+    position: absolute;
+    right: var(--spacing-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    font-weight: var(--font-weight-extrabold);
+    color: #28a745;
+    opacity: 0.3;
+}
+
+/* ===== Version Navigation Bar ===== */
+.version-navigation {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-2xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-lg);
+    animation: fadeInDown 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.version-navigation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    animation: shine 3s infinite;
+}
+
+.version-nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    position: relative;
+    z-index: 1;
+}
+
+.version-info {
+    color: white;
+}
+
+.version-info h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: var(--font-weight-extrabold);
+    color: white;
+    letter-spacing: -0.3px;
+}
+
+.version-info p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    opacity: 0.95;
+    color: white;
+    font-weight: var(--font-weight-semibold);
+}
+
+.version-badges {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.version-badge {
+    background: white;
+    color: var(--color-primary);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-3xl);
+    font-weight: var(--font-weight-extrabold);
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: var(--border-width) solid transparent;
+}
+
+.version-badge.active {
+    background: white;
+    color: var(--color-primary);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transform: scale(1.05);
+}
+
+.version-badge:not(.active) {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.version-badge:not(.active):hover {
+    background: white;
+    color: var(--color-primary);
+    border-color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.version-badge .active-star {
+    color: #4caf50;
+    font-size: 16px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+}
+
 /* ===== Page Title & Subtitle ===== */
 .page-title {
     font-size: 42px;
@@ -162,6 +303,91 @@ body {
     color: var(--color-text-secondary);
     line-height: 1.8;
     font-weight: var(--font-weight-normal);
+}
+
+.model-box-content p {
+    margin-bottom: var(--spacing-xs);
+}
+
+.model-box-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Expense Items Styling */
+.expense-item {
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-xs);
+    background: #f8f9fa;
+    border-radius: var(--radius-md);
+    border: 1px solid #e9ecef;
+    transition: all var(--transition-fast);
+}
+
+.expense-item:hover {
+    background: #e9ecef;
+    transform: translateX(-2px);
+}
+
+.expense-item strong {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-bold);
+}
+
+.expense-item p {
+    margin: 4px 0;
+}
+
+.expense-item .expense-description {
+    font-size: 14px;
+    color: var(--color-text-light);
+}
+
+.expense-item .expense-calculation {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+}
+
+.expense-total {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-text-primary);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Revenue Stream Items */
+.revenue-item {
+    margin-bottom: var(--spacing-sm);
+    padding-right: var(--spacing-md);
+    border-right: 3px solid var(--color-primary);
+}
+
+.revenue-item p {
+    margin: 4px 0;
+}
+
+.revenue-details {
+    margin-right: var(--spacing-lg);
+    color: var(--color-text-light);
+    font-size: 14px;
+}
+
+.revenue-amount {
+    margin-right: var(--spacing-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+}
+
+/* Empty State */
+.empty-state {
+    color: var(--color-text-muted);
+    font-style: italic;
+    text-align: center;
+    padding: var(--spacing-md) 0;
 }
 
 /* ===== Grid Positioning ===== */
@@ -321,6 +547,16 @@ body {
         grid-column: 2 / 4;
         grid-row: 5;
     }
+
+    .version-nav-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .version-badges {
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 768px) {
@@ -339,6 +575,23 @@ body {
 
     .page-subtitle {
         font-size: 15px;
+    }
+
+    .version-navigation {
+        padding: var(--spacing-md);
+    }
+
+    .version-info h3 {
+        font-size: 16px;
+    }
+
+    .version-info p {
+        font-size: 13px;
+    }
+
+    .version-badge {
+        font-size: 13px;
+        padding: 6px var(--spacing-sm);
     }
 
     .model-grid {
@@ -373,7 +626,9 @@ body {
     body::after,
     .background-shapes,
     .header,
-    .action-buttons {
+    .action-buttons,
+    .version-navigation,
+    .alert-success {
         display: none !important;
     }
 
