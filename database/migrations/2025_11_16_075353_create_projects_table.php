@@ -10,13 +10,17 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('project_name');
-            $table->text('project_description')->nullable();
-            $table->string('industry')->nullable();
-            $table->string('revenue_method')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('industry', 100)->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['user_id', 'created_at']);
+            $table->index('industry');
+            $table->index('deleted_at');
         });
     }
 

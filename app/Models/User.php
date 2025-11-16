@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -33,6 +33,22 @@ class User extends Authenticatable
     // Relationships
     public function projects()
     {
-        return $this->hasMany(Project::class, 'user_id', 'user_id');
+        return $this->hasMany(Project::class);
+    }
+
+    public function modelChanges()
+    {
+        return $this->hasMany(ModelChange::class);
+    }
+
+    // Scopes
+    public function scopeVerified($query)
+    {
+        return $query->whereNotNull('email_verified_at');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereNull('deleted_at');
     }
 }
