@@ -7,10 +7,50 @@
 @endpush
 
 @section('content')
-<h1 class="page-title">نموذج عملك التجاري</h1>
-<p class="page-subtitle">قم بمراجعة وتعديل نموذج الأعمال الخاص بك</p>
+
+{{-- <h1 class="page-title">نموذج عملك التجاري</h1>
+<p class="page-subtitle">قم بمراجعة وتعديل نموذج الأعمال الخاص بك</p> --}}
+<!-- Version Navigation Bar -->
+@php
+    $allVersions = \App\Models\BusinessModel::where('project_id', $businessModel->project_id)
+        ->orderBy('version', 'desc')
+        ->get();
+    $hasMultipleVersions = $allVersions->count() > 1;
+@endphp
+
+@if($hasMultipleVersions)
+<div class="version-navigation">
+    <div class="version-nav-content">
+        <div class="version-info">
+            <h3>الإصدارات المتاحة ({{ $allVersions->count() }})</h3>
+            <p>الإصدار الحالي: {{ $businessModel->version }}</p>
+        </div>
+
+        <div class="version-badges">
+            @foreach($allVersions as $version)
+                @if($version->id == $businessModel->id)
+                    <span class="version-badge active">
+                        الإصدار {{ $version->version }}
+                        @if($version->is_active)
+                            <span class="active-star">★</span>
+                        @endif
+                    </span>
+                @else
+                    <a href="{{ route('business-model.show', $version->id) }}" class="version-badge">
+                        الإصدار {{ $version->version }}
+                        @if($version->is_active)
+                            <span class="active-star">★</span>
+                        @endif
+                    </a>
+                @endif
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
 
 <div class="model-grid">
+    <!-- 1. الشركاء الرئيسيون -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -19,10 +59,15 @@
             الشركاء الرئيسيون
         </div>
         <div class="model-box-content">
-            الموردون الرئيسيون، شركاء التوزيع، المستثمرون الاستراتيجيون، مقدمو الخدمات التقنية، الشركاء في مجال التسويق والترويج
+            @forelse($businessModel->keyPartnerships as $partnership)
+                <p>{{ $partnership->description }}</p>
+            @empty
+                <p class="empty-state">لم يتم تحديد شركاء رئيسيين</p>
+            @endforelse
         </div>
     </div>
 
+    <!-- 2. الأنشطة الرئيسية -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -31,10 +76,15 @@
             الأنشطة الرئيسية
         </div>
         <div class="model-box-content">
-            تطوير المنتج أو الخدمة، التسويق والمبيعات، إدارة العمليات، خدمة العملاء، البحث والتطوير، إدارة سلسلة التوريد
+            @forelse($businessModel->keyActivities as $activity)
+                <p>{{ $activity->description }}</p>
+            @empty
+                <p class="empty-state">لم يتم تحديد أنشطة رئيسية</p>
+            @endforelse
         </div>
     </div>
 
+    <!-- 3. عرض القيمة -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -43,10 +93,15 @@
             عرض القيمة
         </div>
         <div class="model-box-content">
-            المنتج أو الخدمة المبتكرة التي تحل مشكلة محددة للعملاء، المزايا التنافسية الفريدة، القيمة المضافة التي نقدمها للسوق
+            @forelse($businessModel->valuePropositions as $proposition)
+                <p>{{ $proposition->content }}</p>
+            @empty
+                <p class="empty-state">لم يتم تحديد عرض قيمة</p>
+            @endforelse
         </div>
     </div>
 
+    <!-- 4. العلاقات مع العملاء -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -55,10 +110,20 @@
             العلاقات مع العملاء
         </div>
         <div class="model-box-content">
-            خدمة عملاء متميزة، دعم فني مستمر، برامج الولاء، التواصل الشخصي، المجتمعات الإلكترونية، المساعدة الذاتية
+            @forelse($businessModel->customerRelationships as $relationship)
+                @if($relationship->relationshipType)
+                    <p><strong>النوع:</strong> {{ $relationship->relationshipType->name }}</p>
+                @endif
+                @if($relationship->details)
+                    <p>{{ $relationship->details }}</p>
+                @endif
+            @empty
+                <p class="empty-state">لم يتم تحديد نوع العلاقة مع العملاء</p>
+            @endforelse
         </div>
     </div>
 
+    <!-- 5. شرائح العملاء -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -67,10 +132,23 @@
             شرائح العملاء
         </div>
         <div class="model-box-content">
-            السوق المستهدف الرئيسي، الفئات العمرية المحددة، الشركات الصغيرة والمتوسطة، المستهلكون الأفراد، العملاء من قطاعات معينة
+            @forelse($businessModel->customerSegments as $segment)
+                @if($segment->age_group)
+                    <p><strong>الفئة العمرية:</strong> {{ $segment->age_group }}</p>
+                @endif
+                @if($segment->region)
+                    <p><strong>المنطقة:</strong> {{ $segment->region }}</p>
+                @endif
+                @if($segment->notes)
+                    <p><strong>ملاحظات:</strong> {{ $segment->notes }}</p>
+                @endif
+            @empty
+                <p class="empty-state">لم يتم تحديد شرائح العملاء</p>
+            @endforelse
         </div>
     </div>
 
+    <!-- 6. الموارد الرئيسية -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -79,10 +157,20 @@
             الموارد الرئيسية
         </div>
         <div class="model-box-content">
-            الموارد البشرية المؤهلة، الأصول المادية، الملكية الفكرية، رأس المال، التكنولوجيا والأنظمة، قاعدة البيانات
+            @forelse($businessModel->keyResources as $resource)
+                @if($resource->resourceType)
+                    <p><strong>{{ $resource->resourceType->name }}:</strong></p>
+                @endif
+                @if($resource->details)
+                    <p>{{ $resource->details }}</p>
+                @endif
+            @empty
+                <p class="empty-state">لم يتم تحديد موارد رئيسية</p>
+            @endforelse
         </div>
     </div>
 
+    <!-- 7. القنوات -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -91,10 +179,20 @@
             القنوات
         </div>
         <div class="model-box-content">
-            المنصات الرقمية، وسائل التواصل الاجتماعي، الموقع الإلكتروني، التطبيقات المحمولة، المتاجر الفعلية، وكلاء البيع
+            @forelse($businessModel->channels as $channel)
+                @if($channel->channelType)
+                    <p>• {{ $channel->channelType->name }}</p>
+                @endif
+                @if($channel->details)
+                    <p>• {{ $channel->details }}</p>
+                @endif
+            @empty
+                <p class="empty-state">لم يتم تحديد قنوات</p>
+            @endforelse
         </div>
     </div>
 
+    <!-- 8. هيكل التكاليف -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -103,10 +201,33 @@
             هيكل التكاليف
         </div>
         <div class="model-box-content">
-            تكاليف التشغيل، الرواتب والأجور، التسويق والإعلان، تكاليف الإنتاج، الإيجارات، التكنولوجيا والبنية التحتية
+            @forelse($businessModel->expenses->sortBy('display_order') as $expense)
+                <div class="expense-item">
+                    @if($expense->expense_type)
+                        <p><strong>{{ $expense->expense_type }}</strong></p>
+                    @endif
+                    @if($expense->description)
+                        <p class="expense-description">{{ $expense->description }}</p>
+                    @endif
+                    <p class="expense-calculation">
+                        التكلفة: {{ $expense->unit_cost }} {{ $expense->currency_code }} ×
+                        الكمية: {{ $expense->quantity }} =
+                        <strong>{{ number_format($expense->unit_cost * $expense->quantity, 2) }} {{ $expense->currency_code }}</strong>
+                    </p>
+                </div>
+            @empty
+                <p class="empty-state">لم يتم تحديد تكاليف</p>
+            @endforelse
+
+            @if($businessModel->expenses->count() > 0)
+                <div class="expense-total">
+                    المجموع الكلي: {{ number_format($businessModel->getTotalExpenses(), 2) }} {{ $businessModel->currency_code }}
+                </div>
+            @endif
         </div>
     </div>
 
+    <!-- 9. مصادر الإيرادات -->
     <div class="model-box">
         <div class="model-box-title">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -115,14 +236,31 @@
             مصادر الإيرادات
         </div>
         <div class="model-box-content">
-            المبيعات المباشرة، رسوم الاشتراك، العمولات، الإعلانات، الترخيص، الخدمات الإضافية، البيع المتقاطع
+            @forelse($businessModel->revenueStreams as $stream)
+                <div class="revenue-item">
+                    @if($stream->streamType)
+                        <p>• {{ $stream->streamType->name }}</p>
+                    @endif
+                    @if($stream->details)
+                        <p class="revenue-details">{{ $stream->details }}</p>
+                    @endif
+                    @if($stream->projected_amount)
+                        <p class="revenue-amount">المبلغ المتوقع: {{ number_format($stream->projected_amount, 2) }} {{ $stream->currency_code }}</p>
+                    @endif
+                </div>
+            @empty
+                <p class="empty-state">لم يتم تحديد مصادر إيرادات</p>
+            @endforelse
         </div>
     </div>
 </div>
 
 <div class="action-buttons">
-    <button class="btn btn-edit" onclick="window.location.href='/input'">
-        تعديل البيانات
+    <button class="btn btn-edit" onclick="window.location.href='{{ route('display-list') }}'">
+        العودة إلى القائمة
+    </button>
+    <button class="btn btn-edit" onclick="window.location.href='{{ route('business-model.edit', $businessModel->id) }}'">
+        تحديث النموذج
     </button>
     <button class="btn btn-download" onclick="window.print()">
         تحميل كـ PDF

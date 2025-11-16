@@ -14,6 +14,17 @@
     <h1 style="font-size: 2rem; color: #2c3e50;">أدخل معلومات نموذج عملك التجاري</h1>
   </header>
 
+  <!-- Display Errors -->
+  @if($errors->any())
+    <div style="background-color: #fee; border: 1px solid #fcc; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+      <ul style="margin: 0; padding-right: 20px; color: #c33;">
+        @foreach($errors->all() as $error)
+          <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+  @endif
+
   <!-- Main Form Container -->
   <main>
     <form action="{{ route('generate') }}" method="POST">
@@ -23,13 +34,13 @@
       <section>
         <h2>القيمة المضافة (عرض القيمة)</h2>
         <p>ما الفائدة أو الميزة التي تقدمها لعملائك؟ مثل جودة أعلى أو سعر أقل أو توصيل سريع...</p>
-        <textarea name="value_proposition" rows="4" placeholder="اكتب هنا...">{{ old('value_proposition') }}</textarea>
+        <textarea name="value_proposition" rows="4" placeholder="اكتب هنا..." required>{{ old('value_proposition') }}</textarea>
         <div>
           <p>اقتراحات:</p>
-          <button type="button">توصيل سريع</button>
-          <button type="button">دعم فني دائم</button>
-          <button type="button">منتجات محلية الصنع</button>
-          <button type="button">أسعار منافسة</button>
+          <button type="button" onclick="addSuggestion('value_proposition', 'توصيل سريع')">توصيل سريع</button>
+          <button type="button" onclick="addSuggestion('value_proposition', 'دعم فني دائم')">دعم فني دائم</button>
+          <button type="button" onclick="addSuggestion('value_proposition', 'منتجات محلية الصنع')">منتجات محلية الصنع</button>
+          <button type="button" onclick="addSuggestion('value_proposition', 'أسعار منافسة')">أسعار منافسة</button>
         </div>
       </section>
 
@@ -47,11 +58,12 @@
             <option {{ old('age_group') == 'جميع الأعمار' ? 'selected' : '' }}>جميع الأعمار</option>
         </select>
 
-        <label>المنطقة الجغرافية:</label>
-        <select name="region">
-          <option {{ old('region') == 'محلي' ? 'selected' : '' }}>محلي</option>
-          <option {{ old('region') == 'وطني' ? 'selected' : '' }}>وطني</option>
-          <option {{ old('region') == 'دولي' ? 'selected' : '' }}>دولي</option>
+        <label>المنطقة الجغرافية: <span style="color: red;">*</span></label>
+        <select name="region" required>
+          <option value="">اختر المنطقة</option>
+          <option value="محلي" {{ old('region') == 'محلي' ? 'selected' : '' }}>محلي</option>
+          <option value="وطني" {{ old('region') == 'وطني' ? 'selected' : '' }}>وطني</option>
+          <option value="دولي" {{ old('region') == 'دولي' ? 'selected' : '' }}>دولي</option>
         </select>
 
         <textarea name="target_notes" rows="3" placeholder="تفاصيل إضافية...">{{ old('target_notes') }}</textarea>
@@ -59,9 +71,9 @@
 
       <!-- 3. العلاقات مع العملاء -->
         <section>
-            <h2>العلاقات مع العملاء</h2>
+            <h2>العلاقات مع العملاء <span style="color: red;">*</span></h2>
             <p>كيف تتعامل مع عملائك؟ هل هي خدمة ذاتية أم مساعدة شخصية؟</p>
-            <label><input type="radio" name="relationship" value="self_service" {{ old('relationship') == 'self_service' ? 'checked' : '' }}> خدمة ذاتية</label>
+            <label><input type="radio" name="relationship" value="self_service" {{ old('relationship') == 'self_service' ? 'checked' : '' }} required> خدمة ذاتية</label>
             <label><input type="radio" name="relationship" value="personal_assist" {{ old('relationship') == 'personal_assist' ? 'checked' : '' }}> مساعدة شخصية</label>
             <label><input type="radio" name="relationship" value="automated" {{ old('relationship') == 'automated' ? 'checked' : '' }}> خدمة آلية</label>
             <label><input type="radio" name="relationship" value="co_creation" {{ old('relationship') == 'co_creation' ? 'checked' : '' }}> شراكة مع العميل</label>
@@ -71,7 +83,7 @@
 
         <!-- 4. القنوات -->
         <section>
-            <h2>القنوات</h2>
+            <h2>القنوات <span style="color: red;">*</span></h2>
             <p>كيف تصل إلى عملائك أو كيف يصلون إليك؟</p>
             <label><input type="checkbox" name="channels[]" value="online_store" {{ in_array('online_store', old('channels', [])) ? 'checked' : '' }}> متجر إلكتروني</label>
             <label><input type="checkbox" name="channels[]" value="mobile_app" {{ in_array('mobile_app', old('channels', [])) ? 'checked' : '' }}> تطبيق جوال</label>
@@ -83,21 +95,21 @@
 
       <!-- 5. الأنشطة الرئيسية -->
       <section>
-        <h2>الأنشطة الرئيسية</h2>
+        <h2>الأنشطة الرئيسية <span style="color: red;">*</span></h2>
         <p>ما الأنشطة الأساسية التي يعتمد عليها عملك؟</p>
-        <textarea name="key_activities" rows="4" placeholder="اكتب هنا...">{{ old('key_activities') }}</textarea>
+        <textarea name="key_activities" rows="4" placeholder="اكتب هنا..." required>{{ old('key_activities') }}</textarea>
         <div>
           <p>اقتراحات:</p>
-          <button type="button">التصنيع</button>
-          <button type="button">التسويق</button>
-          <button type="button">البيع</button>
-          <button type="button">التطوير التقني</button>
+          <button type="button" onclick="addSuggestion('key_activities', 'التصنيع')">التصنيع</button>
+          <button type="button" onclick="addSuggestion('key_activities', 'التسويق')">التسويق</button>
+          <button type="button" onclick="addSuggestion('key_activities', 'البيع')">البيع</button>
+          <button type="button" onclick="addSuggestion('key_activities', 'التطوير التقني')">التطوير التقني</button>
         </div>
       </section>
 
       <!-- 6. الموارد الرئيسية -->
       <section>
-        <h2>الموارد الرئيسية</h2>
+        <h2>الموارد الرئيسية <span style="color: red;">*</span></h2>
         <p>ما الموارد التي تحتاجها لتشغيل عملك؟</p>
 
         <label><input type="checkbox" name="resources[]" value="human" {{ in_array('human', old('resources', [])) ? 'checked' : '' }}> بشرية</label>
@@ -133,7 +145,7 @@
 
       <!-- 8. مصادر الدخل -->
       <section>
-        <h2>مصادر الدخل</h2>
+        <h2>مصادر الدخل <span style="color: red;">*</span></h2>
         <p>كيف تكسب المال من عملك؟</p>
         <label><input type="checkbox" name="income[]" value="sales" {{ in_array('sales', old('income', [])) ? 'checked' : '' }}> مبيعات مباشرة</label>
         <label><input type="checkbox" name="income[]" value="subscriptions" {{ in_array('subscriptions', old('income', [])) ? 'checked' : '' }}> اشتراكات</label>
@@ -148,8 +160,8 @@
         <h2>هيكل التكلفة</h2>
         <p>ما هي التكاليف الأساسية لتشغيل المشروع؟</p>
 
-        <label>العملة:</label>
-        <select id="currencySelect" name="currency">
+        <label>العملة: <span style="color: red;">*</span></label>
+        <select id="currencySelect" name="currency" required>
           <option value="$" {{ old('currency') == '$' ? 'selected' : '' }}>دولار أمريكي ($)</option>
           <option value="₺" {{ old('currency') == '₺' ? 'selected' : '' }}>ليرة تركية (₺)</option>
           <option value="ل.س" {{ old('currency') == 'ل.س' ? 'selected' : '' }}>ليرة سورية (ل.س)</option>
@@ -213,6 +225,17 @@
 @push('scripts')
   <script>
     let rowCounter = 3;
+
+    // Add suggestion to textarea
+    function addSuggestion(fieldName, text) {
+      const textarea = document.querySelector(`[name="${fieldName}"]`);
+      const currentValue = textarea.value.trim();
+      if (currentValue) {
+        textarea.value = currentValue + '، ' + text;
+      } else {
+        textarea.value = text;
+      }
+    }
 
     // Convert Western numerals to Arabic-Indic numerals
     function toArabicNumerals(str) {

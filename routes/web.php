@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BusinessModelController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\model_business\DashboardController;
+use App\Http\Controllers\model_business\DisplayListController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,11 +22,6 @@ Route::get('/', function () {
 Route::get('/app', function () {
     return view('layouts.app');
 })->middleware('auth')->name('app');
-
-// Home route (for authenticated users accessing from app layout)
-// Route::get('/home', function () {
-//     return view('pages/index');
-// })->middleware('auth')->name('home');
 
 /*
 |--------------------------------------------------------------------------
@@ -55,35 +52,64 @@ Route::post('/logout', [AuthController::class, 'logout'])
 */
 
 Route::middleware('auth')->group(function () {
-    // صفحة إدخال البيانات - Data Input Page (News)
-    // Route::get('/news', [BusinessModelController::class, 'index'])
-    //     ->name('index');
+    // صفحة لوحة التحكم - Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
+        ->name('dashboard');
 
-    // صفحة حول - Data Input Form
+    Route::get('/display-list', [DisplayListController::class, 'showModelList'])
+        ->name('display-list');
+
+    // صفحة إدخال البيانات - Data Input Form
     Route::get('/data-input', [BusinessModelController::class, 'index'])
         ->name('data-input');
 
     // معالجة نموذج الإدخال وإنشاء النموذج - Form Submission
-    Route::post('/generate', [BusinessModelController::class, 'generateBusinessModel'])
+    Route::post('/generate', [BusinessModelController::class, 'generate'])
         ->name('generate');
 
-         // معالجة نموذج الإدخال وإنشاء النموذج - Form Submission
-        Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
-            ->name('dashboard');
     // صفحة عرض نموذج الأعمال - Business Model Display Page
-    Route::get('/display', [BusinessModelController::class, 'displayBusinessModel'])
-        ->name('display');
+    Route::get('/business-model/{id}', [BusinessModelController::class, 'show'])
+        ->name('business-model.show');
 
-    // // Placeholder routes for app layout navigation
-    // Route::get('/categories', function () {
-    //     return view('pages/index'); // Replace with actual categories view
-    // })->name('categories.index');
+    // حذف نموذج الأعمال - Delete Business Model
+    Route::delete('/business-model/{id}', [DisplayListController::class, 'deleteBusinessModel'])
+        ->name('business-model.delete');
 
-    // Route::get('/users', function () {
-    //     return view('pages/index'); // Replace with actual users view
-    // })->name('users.index');
+    // Alternative route for display (backward compatibility)
+    Route::get('/display/{id?}', function($id = null) {
+        if (!$id) {
+            // Redirect to latest business model or data input
+            $userId = Auth::id();
+            $latestModel = \App\Models\BusinessModel::where('is_active', true)
+                ->whereHas('project', function($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })
+                ->latest()
+                ->first();
 
-    // Route::get('/settings', function () {
-    //     return view('pages/index'); // Replace with actual settings view
-    // })->name('settings');
-});
+            if ($latestModel) {
+                return redirect()->route('business-model.show', $latestModel->id);
+            }
+
+            return redirect()->route('data-input');
+        }
+
+        return redirect()->route('business-model.show', $id);
+            })->name('business-model.display');
+        // صفحة عرض نموذج الأعمال - Business Model Display Page
+        Route::get('/business-model/{id}', [BusinessModelController::class, 'show'])
+            ->name('business-model.show');
+
+        // صفحة تعديل نموذج الأعمال - Edit Business Model
+        Route::get('/business-model/{id}/edit', [BusinessModelController::class, 'edit'])
+            ->name('business-model.edit');
+
+        // تحديث نموذج الأعمال - Update Business Model
+        Route::put('/business-model/{id}', [BusinessModelController::class, 'update'])
+            ->name('business-model.update');
+        Route::delete('/project/{projectId}/delete-all', [DisplayListController::class, 'deleteAllVersions'])
+            ->name('project.delete-all');
+            // حذف نسخ محددة من النماذج - Delete Selected Versions
+            Route::delete('/versions/delete-selected', [DisplayListController::class, 'deleteSelectedVersions'])
+                ->name('versions.delete-selected');
+    });
