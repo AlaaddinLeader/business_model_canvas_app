@@ -25,6 +25,41 @@ use Illuminate\Support\Facades\Auth;
 class BusinessModelController extends Controller
 {
     /**
+     * دالة ترجمة القيم من الإنجليزية إلى العربية
+     */
+    private function translateToArabic($code, $type)
+    {
+        $translations = [
+            'relationship' => [
+                'self_service' => 'خدمة ذاتية',
+                'personal_assist' => 'مساعدة شخصية',
+                'automated' => 'خدمة آلية',
+                'co_creation' => 'شراكة مع العميل',
+            ],
+            'channel' => [
+                'online_store' => 'متجر إلكتروني',
+                'mobile_app' => 'تطبيق جوال',
+                'physical_store' => 'متجر فعلي',
+                'agents' => 'مندوبين أو وكلاء',
+            ],
+            'resource' => [
+                'human' => 'موارد بشرية',
+                'technical' => 'موارد تقنية',
+                'equipment' => 'معدات',
+                'other' => 'موارد أخرى',
+            ],
+            'income' => [
+                'sales' => 'مبيعات مباشرة',
+                'subscriptions' => 'اشتراكات',
+                'ads' => 'إعلانات',
+                'commissions' => 'عمولات',
+            ],
+        ];
+
+        return $translations[$type][$code] ?? $code;
+    }
+
+    /**
      * عرض صفحة إدخال البيانات
      */
     public function index()
@@ -98,9 +133,11 @@ class BusinessModelController extends Controller
             // 5. العلاقات مع العملاء (Customer Relationship)
             $relationshipTypeId = null;
             if ($validated['relationship'] !== 'other') {
+                // استخدام الترجمة العربية للاسم
+                $arabicName = $this->translateToArabic($validated['relationship'], 'relationship');
                 $relationshipType = RelationshipType::firstOrCreate(
                     ['code' => $validated['relationship']],
-                    ['name' => $validated['relationship']]
+                    ['name' => $arabicName]
                 );
                 $relationshipTypeId = $relationshipType->id;
             }
@@ -124,9 +161,11 @@ class BusinessModelController extends Controller
                         'details' => $validated['channel_other'],
                     ]);
                 } else {
+                    // استخدام الترجمة العربية للاسم
+                    $arabicName = $this->translateToArabic($channel, 'channel');
                     $channelType = ChannelType::firstOrCreate(
                         ['code' => $channel],
-                        ['name' => $channel]
+                        ['name' => $arabicName]
                     );
 
                     Channel::create([
@@ -164,32 +203,19 @@ class BusinessModelController extends Controller
                     continue;
                 }
 
-                if ($resource !== 'other') {
-                    $resourceType = ResourceType::firstOrCreate(
-                        ['code' => $resource],
-                        ['name' => $resource]
-                    );
+                // استخدام الترجمة العربية للاسم
+                $arabicName = $this->translateToArabic($resource, 'resource');
+                $resourceType = ResourceType::firstOrCreate(
+                    ['code' => $resource],
+                    ['name' => $arabicName]
+                );
 
-                    KeyResource::create([
-                        'business_model_id' => $businessModel->id,
-                        'version' => 1,
-                        'resource_type_id' => $resourceType->id,
-                        'details' => $details,
-                    ]);
-                } else {
-                    // للموارد "أخرى"، نحتاج إلى إنشاء نوع أو استخدام null إذا كان مسموحاً
-                    $resourceType = ResourceType::firstOrCreate(
-                        ['code' => 'other'],
-                        ['name' => 'أخرى']
-                    );
-
-                    KeyResource::create([
-                        'business_model_id' => $businessModel->id,
-                        'version' => 1,
-                        'resource_type_id' => $resourceType->id,
-                        'details' => $details,
-                    ]);
-                }
+                KeyResource::create([
+                    'business_model_id' => $businessModel->id,
+                    'version' => 1,
+                    'resource_type_id' => $resourceType->id,
+                    'details' => $details,
+                ]);
             }
 
             // 9. الشراكات الرئيسية (Key Partnerships)
@@ -212,9 +238,11 @@ class BusinessModelController extends Controller
                         'currency_code' => $validated['currency'],
                     ]);
                 } else {
+                    // استخدام الترجمة العربية للاسم
+                    $arabicName = $this->translateToArabic($income, 'income');
                     $streamType = RevenueStreamType::firstOrCreate(
                         ['code' => $income],
-                        ['name' => $income]
+                        ['name' => $arabicName]
                     );
 
                     RevenueStream::create([
@@ -373,7 +401,6 @@ class BusinessModelController extends Controller
             $oldModel->is_active = false;
             $oldModel->save();
 
-            // إنشاء نموذج جديد بنسخة محدثة
             // إنشاء نموذج جديد بنسخة محدثة - التحقق من أعلى نسخة بما في ذلك المحذوفة
             $maxVersion = BusinessModel::withTrashed()
                 ->where('project_id', $oldModel->project_id)
@@ -407,9 +434,10 @@ class BusinessModelController extends Controller
             // 3. العلاقات مع العملاء
             $relationshipTypeId = null;
             if ($validated['relationship'] !== 'other') {
+                $arabicName = $this->translateToArabic($validated['relationship'], 'relationship');
                 $relationshipType = RelationshipType::firstOrCreate(
                     ['code' => $validated['relationship']],
-                    ['name' => $validated['relationship']]
+                    ['name' => $arabicName]
                 );
                 $relationshipTypeId = $relationshipType->id;
             }
@@ -433,9 +461,10 @@ class BusinessModelController extends Controller
                         'details' => $validated['channel_other'],
                     ]);
                 } else {
+                    $arabicName = $this->translateToArabic($channel, 'channel');
                     $channelType = ChannelType::firstOrCreate(
                         ['code' => $channel],
-                        ['name' => $channel]
+                        ['name' => $arabicName]
                     );
 
                     Channel::create([
@@ -472,31 +501,18 @@ class BusinessModelController extends Controller
                     continue;
                 }
 
-                if ($resource !== 'other') {
-                    $resourceType = ResourceType::firstOrCreate(
-                        ['code' => $resource],
-                        ['name' => $resource]
-                    );
+                $arabicName = $this->translateToArabic($resource, 'resource');
+                $resourceType = ResourceType::firstOrCreate(
+                    ['code' => $resource],
+                    ['name' => $arabicName]
+                );
 
-                    KeyResource::create([
-                        'business_model_id' => $newModel->id,
-                        'version' => $newVersion,
-                        'resource_type_id' => $resourceType->id,
-                        'details' => $details,
-                    ]);
-                } else {
-                    $resourceType = ResourceType::firstOrCreate(
-                        ['code' => 'other'],
-                        ['name' => 'أخرى']
-                    );
-
-                    KeyResource::create([
-                        'business_model_id' => $newModel->id,
-                        'version' => $newVersion,
-                        'resource_type_id' => $resourceType->id,
-                        'details' => $details,
-                    ]);
-                }
+                KeyResource::create([
+                    'business_model_id' => $newModel->id,
+                    'version' => $newVersion,
+                    'resource_type_id' => $resourceType->id,
+                    'details' => $details,
+                ]);
             }
 
             // 7. الشراكات الرئيسية
@@ -519,9 +535,10 @@ class BusinessModelController extends Controller
                         'currency_code' => $validated['currency'],
                     ]);
                 } else {
+                    $arabicName = $this->translateToArabic($income, 'income');
                     $streamType = RevenueStreamType::firstOrCreate(
                         ['code' => $income],
-                        ['name' => $income]
+                        ['name' => $arabicName]
                     );
 
                     RevenueStream::create([
