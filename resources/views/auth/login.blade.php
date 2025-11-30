@@ -31,7 +31,7 @@
 
         <div class="greeting">
             <h1>مرحباً بكم!</h1>
-            <p>سجّل الدخول لإنشاء نموذج عملك التجاري</p>
+            <p>سجّل الدخول باسم المستخدم وكلمة المرور</p>
         </div>
 
         @if($errors->any())
@@ -53,16 +53,26 @@
         <form method="POST" action="{{ route('login.post') }}">
             @csrf
 
+            <!-- Username Field (NOT EMAIL) -->
             <div class="input-group">
-                <label for="email">البريد الإلكتروني</label>
+                <label for="username">اسم المستخدم</label>
                 <div class="input-wrapper">
                     <svg class="input-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/>
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z"/>
                     </svg>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="example@domain.com" required autofocus>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="{{ old('username') }}"
+                        placeholder="أدخل اسم المستخدم"
+                        required
+                        autofocus
+                    >
                 </div>
             </div>
 
+            <!-- Password Field -->
             <div class="input-group">
                 <label for="password">كلمة المرور</label>
                 <div class="input-wrapper">
@@ -76,12 +86,12 @@
                 </div>
             </div>
 
+            <!-- Remember Me & Forgot Password -->
             <div class="options">
                 <label class="remember-me">
-                    <input type="checkbox" id="remember" name="remember">
+                    <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
                     <span>تذكّرني</span>
                 </label>
-                <a href="#" class="forgot-password">هل نسيت كلمة المرور؟</a>
             </div>
 
             <button type="submit" class="login-btn">تسجيل الدخول</button>
@@ -124,6 +134,11 @@
                 eyeIcon.setAttribute('d', 'M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z');
             }
         }
+
+        // Username validation - prevent special characters during typing
+        document.getElementById('username').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^a-zA-Z0-9_]/g, '');
+        });
     </script>
 </body>
 </html>

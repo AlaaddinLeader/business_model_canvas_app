@@ -12,7 +12,6 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -23,8 +22,9 @@ class AuthController extends Controller
     {
         return view('auth.register');
     }
+
     /**
-     * Handle user registration with secure validation
+     * Handle user registration (Username Only - No Email)
      */
     public function register(Request $request)
     {
@@ -34,71 +34,90 @@ class AuthController extends Controller
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
-                'email' => "محاولات كثيرة. يرجى المحاولة مرة أخرى بعد $seconds ثواني."
+                'username' => "محاولات كثيرة. يرجى المحاولة مرة أخرى بعد $seconds ثواني."
             ]);
         }
 
-        // Validate input with strict rules
+        // Validate input - NO EMAIL REQUIRED
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'regex:/^[\p{Arabic}a-zA-Z\s]+$/u'],
-            'email' => [
+            'name' => [
                 'required',
-                'email',
+                'string',
                 'max:255',
-                'unique:users,email',
-                'not_regex:/[<>"\']/' // Prevent XSS attempts
+                'regex:/^[\p{Arabic}a-zA-Z\s]+$/u'
+            ],
+            'username' => [
+                'required',
+                'string',
+                'max:50',
+                'min:3',
+                'unique:users,username',
+                'regex:/^[a-zA-Z0-9_]+$/', // Only letters, numbers, underscores
+                'not_regex:/[<>"\']/'
             ],
             'password' => [
                 'required',
+                'confirmed',
                 'string',
                 Password::min(8)
                     ->letters()
                     ->mixedCase()
                     ->numbers()
                     ->symbols()
-                    ->uncompromised()
             ],
         ], [
             'name.required' => 'الاسم مطلوب.',
             'name.regex' => 'الاسم يمكن أن يحتوي فقط على حروف ومسافات.',
-            'email.required' => 'البريد الإلكتروني مطلوب.',
-            'email.email' => 'صيغة البريد الإلكتروني غير صحيحة.',
-            'email.unique' => 'هذا البريد الإلكتروني مستخدم بالفعل.',
+            'username.required' => 'اسم المستخدم مطلوب.',
+            'username.min' => 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل.',
+            'username.max' => 'اسم المستخدم يجب ألا يتجاوز 50 حرف.',
+            'username.unique' => 'اسم المستخدم مستخدم بالفعل. اختر اسماً آخر.',
+            'username.regex' => 'اسم المستخدم يمكن أن يحتوي فقط على حروف إنجليزية وأرقام وشرطة سفلية (_).',
             'password.required' => 'كلمة المرور مطلوبة.',
-            'password.min' => 'كلمة المرور يجب أن تكون على الأقل 8 أحرف.',
-            'password.letters' => 'كلمة المرور يجب أن تحتوي على حروف.',
-            'password.mixedCase' => 'كلمة المرور يجب أن تحتوي على حروف كبيرة وصغيرة.',
-            'password.numbers' => 'كلمة المرور يجب أن تحتوي على أرقام.',
-            'password.symbols' => 'كلمة المرور يجب أن تحتوي على رموز خاصة.',
+            'password.confirmed' => 'كلمة المرور غير متطابقة.',
+            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.',
         ]);
 
-        RateLimiter::hit($key, 300); // 5 minutes penalty
+        RateLimiter::hit($key, 300);
 
         try {
-            // Create user with hashed password
+            // Create user WITHOUT email
             $user = User::create([
                 'name' => strip_tags($validated['name']),
-                'email' => strtolower(trim($validated['email'])),
+                'username' => strtolower(trim($validated['username'])),
+                'email' => null, // No email required
                 'password' => Hash::make($validated['password']),
             ]);
 
             // Log the user in
             Auth::login($user);
 
-            // Regenerate session to prevent session fixation
+            // Regenerate session
             $request->session()->regenerate();
 
             // Clear rate limiter
             RateLimiter::clear($key);
 
-            // Redirect to dashboard
+            Log::info('User registered successfully', [
+                'user_id' => $user->id,
+                'username' => $user->username
+            ]);
+
             return redirect()->route('dashboard')
-                ->with('success', 'تم إنشاء الحساب بنجاح! مرحباً بك');
+                ->with('success', 'تم إنشاء الحساب بنجاح! مرحباً بك ' . $user->name);
+
         } catch (\Exception $e) {
-            return back()->withInput($request->except('password', 'password_confirmation'))
+            Log::error('Registration error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()
+                ->withInput($request->except('password', 'password_confirmation'))
                 ->withErrors(['error' => 'حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.']);
         }
     }
+
     /**
      * Show the login form
      */
@@ -108,62 +127,57 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle user login with security measures
+     * Handle user login (Username Only)
      */
     public function login(Request $request)
     {
-        // Rate limiting for login attempts
+        // Rate limiting
         $key = 'login-' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
-                'email' => "محاولات كثيرة. يرجى المحاولة مرة أخرى بعد $seconds ثواني."
+                'username' => "محاولات كثيرة. يرجى المحاولة مرة أخرى بعد $seconds ثواني."
             ]);
         }
 
         // Validate credentials
         $credentials = $request->validate([
-            'email' => ['required', 'email', 'not_regex:/[<>"\']/'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ], [
-            'email.required' => ' البريد الإلكتروني مطلوب.',
-            'email.email' => 'صيغة البريد الإلكتروني غير صحيحة.',
+            'username.required' => 'اسم المستخدم مطلوب.',
             'password.required' => 'كلمة المرور مطلوبة.',
         ]);
 
-        // Sanitize email
-        $credentials['email'] = strtolower(trim($credentials['email']));
+        // Sanitize username
+        $credentials['username'] = strtolower(trim($credentials['username']));
 
         // Attempt authentication
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            // Clear rate limiter on successful login
             RateLimiter::clear($key);
-
-            // Regenerate session to prevent session fixation
             $request->session()->regenerate();
 
-            // Log successful login
             Log::info('User logged in', [
                 'user_id' => Auth::id(),
+                'username' => Auth::user()->username,
                 'ip' => $request->ip(),
             ]);
 
             return redirect()->intended(route('dashboard'))
-                ->with('success', 'مرحباً بعودتك!');
+                ->with('success', 'مرحباً بعودتك ' . Auth::user()->name . '!');
         }
 
-        // Increment rete limiter on failed attempt
+        // Failed attempt
         RateLimiter::hit($key, 60);
 
-        // Log failed login attempt
         Log::warning('Failed login attempt', [
-            'email' => $credentials['email'],
+            'username' => $credentials['username'],
             'ip' => $request->ip(),
         ]);
 
         throw ValidationException::withMessages([
-            'email' => ['بيانات الدخول غير صحيحة.'],
+            'username' => ['اسم المستخدم أو كلمة المرور غير صحيحة.'],
         ]);
     }
 
@@ -172,15 +186,17 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        $username = Auth::user()->username ?? 'Unknown';
 
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        Log::info('User logged out', ['username' => $username]);
 
         return redirect()->route('index')
             ->with('success', 'تم تسجيل الخروج بنجاح.');
     }
-
 
     /**
      * Redirect to Google OAuth
@@ -192,7 +208,6 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             Log::error('Google Redirect Error', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
             ]);
 
             return redirect()->route('login')
@@ -206,7 +221,6 @@ class AuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            // Get user info from Google (try with stateless first)
             $googleUser = Socialite::driver('google')->user();
 
             Log::info('Google User Data Received', [
@@ -215,39 +229,39 @@ class AuthController extends Controller
                 'id' => $googleUser->getId(),
             ]);
 
-            // Sanitize and normalize email
             $email = strtolower(trim($googleUser->getEmail()));
 
-            // Validate email
             if (empty($email)) {
                 throw new \Exception('لم يتم الحصول على البريد الإلكتروني من Google');
             }
 
-            // Check if user exists with this email
-            $user = User::where('email', $email)->first();
+            // Check if user exists by email OR google_id
+            $user = User::where('email', $email)
+                ->orWhere('google_id', $googleUser->getId())
+                ->first();
 
             if ($user) {
                 Log::info('Existing user found', ['user_id' => $user->id]);
 
-                // Update existing user with Google ID if not set
+                // Update Google data if not set
                 if (empty($user->google_id)) {
                     $user->google_id = $googleUser->getId();
+                    $user->email = $email;
                     $user->avatar = $googleUser->getAvatar();
-
-                    // Only set email_verified_at if it's null
-                    if (is_null($user->email_verified_at)) {
-                        $user->email_verified_at = now();
-                    }
-
+                    $user->email_verified_at = now();
                     $user->save();
-                    Log::info('User updated with Google data', ['user_id' => $user->id]);
                 }
             } else {
                 Log::info('Creating new user from Google');
 
+                // Generate unique username from email
+                $baseUsername = $this->generateUsernameFromEmail($email);
+                $username = $this->ensureUniqueUsername($baseUsername);
+
                 // Create new user
                 $user = User::create([
                     'name' => $googleUser->getName(),
+                    'username' => $username,
                     'email' => $email,
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
@@ -255,48 +269,70 @@ class AuthController extends Controller
                     'password' => null,
                 ]);
 
-                Log::info('New user created successfully', ['user_id' => $user->id]);
+                Log::info('New user created from Google', [
+                    'user_id' => $user->id,
+                    'username' => $username
+                ]);
             }
 
-            // Log the user in with remember me
+            // Log in
             Auth::login($user, true);
-
-            Log::info('User authenticated successfully', ['user_id' => $user->id]);
-
-            // Regenerate session to prevent session fixation
             $request->session()->regenerate();
 
             return redirect()->route('dashboard')
-                ->with('success', 'مرحباً بك! تم تسجيل الدخول بنجاح');
+                ->with('success', 'مرحباً بك ' . $user->name . '! تم تسجيل الدخول بنجاح');
+
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
-            Log::error('Invalid State Exception - Session mismatch', [
+            Log::error('Invalid State Exception', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
             ]);
 
-            // Clear any existing session data and retry
             $request->session()->forget('state');
 
             return redirect()->route('login')
                 ->withErrors(['error' => 'انتهت صلاحية الجلسة. يرجى المحاولة مرة أخرى.']);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            Log::error('Google API Client Error', [
-                'message' => $e->getMessage(),
-                'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : 'No response'
-            ]);
 
-            return redirect()->route('login')
-                ->withErrors(['error' => 'خطأ في الاتصال بـ Google. يرجى التحقق من الإعدادات.']);
         } catch (\Exception $e) {
-            Log::error('Google OAuth General Error', [
+            Log::error('Google OAuth Error', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
             ]);
 
             return redirect()->route('login')
-                ->withErrors(['error' => 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.']);
+                ->withErrors(['error' => 'حدث خطأ أثناء تسجيل الدخول عبر Google.']);
         }
+    }
+
+    /**
+     * Generate username from email
+     */
+    private function generateUsernameFromEmail(string $email): string
+    {
+        $username = explode('@', $email)[0];
+        $username = preg_replace('/[^a-zA-Z0-9_]/', '', $username);
+        $username = strtolower($username);
+
+        if (strlen($username) < 3) {
+            $username .= substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 5);
+        }
+
+        return $username;
+    }
+
+    /**
+     * Ensure username is unique
+     */
+    private function ensureUniqueUsername(string $baseUsername): string
+    {
+        $username = $baseUsername;
+        $counter = 1;
+
+        while (User::where('username', $username)->exists()) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
+        return $username;
     }
 }
