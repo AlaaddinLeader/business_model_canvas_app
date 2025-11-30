@@ -262,8 +262,20 @@
     <button class="btn btn-edit" onclick="window.location.href='{{ route('business-model.edit', $businessModel->id) }}'">
         تحديث النموذج
     </button>
-    <button class="btn btn-download" onclick="window.print()">
+    <!-- Download as PDF -->
+    <button class="btn btn-download" onclick="window.location.href='{{ route('business-model.export.pdf', $businessModel->id) }}'">
+        <svg style="width: 20px; height: 20px; margin-left: 8px; vertical-align: middle;" viewBox="0 0 24 24" fill="white">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10,19L12,15H9V10H15V15L13,19H10Z"/>
+        </svg>
         تحميل كـ PDF
+    </button>
+
+    <!-- Download as Image (PNG) -->
+    <button class="btn btn-download" onclick="window.location.href='{{ route('business-model.export.image', $businessModel->id) }}'">
+        <svg style="width: 20px; height: 20px; margin-left: 8px; vertical-align: middle;" viewBox="0 0 24 24" fill="white">
+            <path d="M21,17H7V3H21M21,1H7A2,2 0 0,0 5,3V17A2,2 0 0,0 7,19H21A2,2 0 0,0 23,17V3A2,2 0 0,0 21,1M3,5H1V21A2,2 0 0,0 3,23H19V21H3M15.96,10.29L13.21,13.83L11.25,11.47L8.5,15H19.5L15.96,10.29Z"/>
+        </svg>
+        تحميل كصورة
     </button>
 </div>
 @endsection
