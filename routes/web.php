@@ -57,8 +57,14 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::middleware('auth')->group(function () {
     // صفحة لوحة التحكم - Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
+     Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
         ->name('dashboard');
+
+    // Optional: API endpoint for quick stats (if you want to refresh stats without page reload)
+    Route::get('/api/dashboard/quick-stats', [DashboardController::class, 'getQuickStats'])
+        ->name('dashboard.quick-stats');
+
+    // صفحة قائمة النماذج - Display List
 
     Route::get('/display-list', [DisplayListController::class, 'showModelList'])
         ->name('display-list');
