@@ -6,8 +6,6 @@
 /* ===== REMOVED: Body override that was causing the width issue ===== */
 /* This was conflicting with app.css layout */
 
-
-
 /* ===== Main Content ===== */
 main {
     position: relative;
@@ -82,14 +80,18 @@ section h2 {
 }
 
 section h2::before {
-    content: '';
+    content: "";
     width: 6px;
     height: 24px;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-primary-dark) 100%
+    );
     border-radius: 3px;
 }
 
-section>p {
+section > p {
     font-size: 15px;
     color: var(--color-text-secondary);
     margin-bottom: 20px;
@@ -112,7 +114,7 @@ label:first-of-type {
 }
 
 label.optional::after {
-    content: '(اختياري)';
+    content: "(اختياري)";
     font-size: 13px;
     font-weight: var(--font-weight-normal);
     color: var(--color-text-muted);
@@ -243,7 +245,11 @@ table.cost-table {
 }
 
 table.cost-table thead {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-primary-dark) 100%
+    );
 }
 
 table.cost-table thead th {
@@ -308,7 +314,11 @@ table.cost-table tbody td.total-cell {
 }
 
 table.cost-table tfoot {
-    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--color-secondary) 0%,
+        var(--color-secondary-dark) 100%
+    );
 }
 
 table.cost-table tfoot td {
@@ -353,24 +363,24 @@ table.cost-table tfoot td:last-child {
 }
 
 .add-row-btn::before {
-    content: '+';
+    content: "+";
     font-size: 20px;
     font-weight: var(--font-weight-extrabold);
 }
 
 /* ===== Suggestion Buttons ===== */
-section>div {
+section > div {
     margin-top: 16px;
 }
 
-section>div p {
+section > div p {
     font-size: 14px;
     font-weight: var(--font-weight-bold);
     color: var(--color-text-tertiary);
     margin-bottom: 12px;
 }
 
-section>div button[type="button"] {
+section > div button[type="button"] {
     display: inline-block;
     padding: 10px 18px;
     background: white;
@@ -385,19 +395,19 @@ section>div button[type="button"] {
     margin: 0 6px 10px 0;
 }
 
-section>div button[type="button"]:hover {
+section > div button[type="button"]:hover {
     border-color: var(--color-primary);
     background: var(--color-background);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(109, 148, 197, 0.2);
 }
 
-section>div button[type="button"]:active {
+section > div button[type="button"]:active {
     transform: translateY(0);
 }
 
 /* ===== Form Action Buttons ===== */
-form>div:last-child {
+form > div:last-child {
     display: flex;
     gap: 16px;
     margin-top: 20px;
@@ -422,19 +432,28 @@ button[type="reset"] {
 }
 
 button[type="submit"] {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-primary-dark) 100%
+    );
     color: white;
     box-shadow: 0 12px 35px rgba(109, 148, 197, 0.4);
 }
 
 button[type="submit"]::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+        135deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
     transform: translateX(-100%);
     transition: transform 0.6s ease;
 }
@@ -482,7 +501,7 @@ button[type="reset"]:active {
         font-size: 20px;
     }
 
-    form>div:last-child {
+    form > div:last-child {
         flex-direction: column;
     }
 
@@ -524,7 +543,7 @@ button[type="reset"]:active {
         font-size: 18px;
     }
 
-    section>p {
+    section > p {
         font-size: 14px;
     }
 
@@ -545,5 +564,35 @@ button[type="reset"]:active {
     .add-row-btn {
         width: 100%;
         justify-content: center;
+    }
+
+    /* Cancel/Secondary Action Button */
+    button[type="button"].btn-secondary,
+    button.cancel-btn {
+        background: white;
+        color: var(--color-text-primary);
+        border: var(--border-width) solid var(--border-color);
+        padding: 16px;
+        border-radius: var(--radius-xl);
+        font-size: 17px;
+        font-weight: var(--font-weight-extrabold);
+        font-family: var(--font-family);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        transition: all var(--transition-smooth);
+        flex: 1;
+    }
+
+    button[type="button"].btn-secondary:hover,
+    button.cancel-btn:hover {
+        border-color: var(--color-primary);
+        background: var(--color-background);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+
+    button[type="button"].btn-secondary:active,
+    button.cancel-btn:active {
+        transform: translateY(-1px);
     }
 }

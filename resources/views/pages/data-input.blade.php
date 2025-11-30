@@ -30,6 +30,13 @@
     <form action="{{ route('generate') }}" method="POST">
       @csrf
 
+      {{-- اسم المشروع --}}
+        <section>
+            <h2>اسم المشروع </h2>
+            <p>اختر اسماً لمشروعك </p>
+            <textarea name="project_name" rows="4" placeholder="اكتب هنا..." required>{{ old('project_name') }}</textarea>
+        </section>
+
       <!-- 1. القيمة المضافة -->
       <section>
         <h2>القيمة المضافة (عرض القيمة)</h2>
