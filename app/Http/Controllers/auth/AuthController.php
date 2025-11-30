@@ -181,12 +181,23 @@ class AuthController extends Controller
             ->with('success', 'تم تسجيل الخروج بنجاح.');
     }
 
+
     /**
      * Redirect to Google OAuth
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        try {
+            return Socialite::driver('google')->redirect();
+        } catch (\Exception $e) {
+            Log::error('Google Redirect Error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->route('login')
+                ->withErrors(['error' => 'حدث خطأ في الاتصال بـ Google. يرجى المحاولة مرة أخرى.']);
+        }
     }
 
     /**
@@ -195,58 +206,89 @@ class AuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            // Get user info from Google
+            // Get user info from Google (try with stateless first)
             $googleUser = Socialite::driver('google')->user();
 
-            Log::info('Google User Data', [
+            Log::info('Google User Data Received', [
                 'name' => $googleUser->getName(),
                 'email' => $googleUser->getEmail(),
                 'id' => $googleUser->getId(),
-                'avatar' => $googleUser->getAvatar(),
             ]);
 
+            // Sanitize and normalize email
+            $email = strtolower(trim($googleUser->getEmail()));
+
+            // Validate email
+            if (empty($email)) {
+                throw new \Exception('لم يتم الحصول على البريد الإلكتروني من Google');
+            }
+
             // Check if user exists with this email
-            $user = User::where('email', $googleUser->getEmail())->first();
+            $user = User::where('email', $email)->first();
 
             if ($user) {
                 Log::info('Existing user found', ['user_id' => $user->id]);
 
                 // Update existing user with Google ID if not set
-                if (!$user->google_id) {
-                    $user->update([
-                        'google_id' => $googleUser->getId(),
-                        'avatar' => $googleUser->getAvatar(),
-                    ]);
-                    Log::info('User updated with Google data');
+                if (empty($user->google_id)) {
+                    $user->google_id = $googleUser->getId();
+                    $user->avatar = $googleUser->getAvatar();
+
+                    // Only set email_verified_at if it's null
+                    if (is_null($user->email_verified_at)) {
+                        $user->email_verified_at = now();
+                    }
+
+                    $user->save();
+                    Log::info('User updated with Google data', ['user_id' => $user->id]);
                 }
             } else {
-                Log::info('Creating new user');
+                Log::info('Creating new user from Google');
 
                 // Create new user
                 $user = User::create([
                     'name' => $googleUser->getName(),
-                    'email' => $googleUser->getEmail(),
+                    'email' => $email,
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
                     'email_verified_at' => now(),
                     'password' => null,
                 ]);
 
-                Log::info('New user created', ['user_id' => $user->id]);
+                Log::info('New user created successfully', ['user_id' => $user->id]);
             }
 
-            // Log the user in
-            Auth::login($user);
+            // Log the user in with remember me
+            Auth::login($user, true);
 
-            Log::info('User logged in successfully');
+            Log::info('User authenticated successfully', ['user_id' => $user->id]);
 
-            // Regenerate session
+            // Regenerate session to prevent session fixation
             $request->session()->regenerate();
 
             return redirect()->route('dashboard')
                 ->with('success', 'مرحباً بك! تم تسجيل الدخول بنجاح');
+        } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
+            Log::error('Invalid State Exception - Session mismatch', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Clear any existing session data and retry
+            $request->session()->forget('state');
+
+            return redirect()->route('login')
+                ->withErrors(['error' => 'انتهت صلاحية الجلسة. يرجى المحاولة مرة أخرى.']);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            Log::error('Google API Client Error', [
+                'message' => $e->getMessage(),
+                'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : 'No response'
+            ]);
+
+            return redirect()->route('login')
+                ->withErrors(['error' => 'خطأ في الاتصال بـ Google. يرجى التحقق من الإعدادات.']);
         } catch (\Exception $e) {
-            Log::error('Google OAuth Error', [
+            Log::error('Google OAuth General Error', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -254,7 +296,7 @@ class AuthController extends Controller
             ]);
 
             return redirect()->route('login')
-                ->withErrors(['error' => 'خطأ: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.']);
         }
     }
 }
