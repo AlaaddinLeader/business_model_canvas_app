@@ -16,6 +16,9 @@ class DashboardController extends Controller
      */
     public function showDashboard()
     {
+        // Set Carbon locale to Arabic for this request
+        Carbon::setLocale('ar');
+
         $user = Auth::user();
 
         // Get all user's projects
@@ -54,6 +57,7 @@ class DashboardController extends Controller
                     'value_proposition' => $model->valuePropositions->first()->content ?? 'لا يوجد وصف',
                     'version' => $model->version,
                     'created_at' => $model->created_at,
+                    'created_at_human' => $model->created_at->locale('ar')->diffForHumans(), // Force Arabic
                     'currency' => $model->currency_code,
                 ];
             });

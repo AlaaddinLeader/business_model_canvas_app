@@ -109,7 +109,7 @@
                             </div>
                         </div>
                         <div class="model-date">
-                            {{ $model['created_at']->diffForHumans() }}
+                            {{ $model['created_at_human'] }}
                         </div>
                     </div>
                 @endforeach

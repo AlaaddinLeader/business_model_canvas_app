@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\App;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,12 @@ class AppServiceProvider extends ServiceProvider
     {
         if (config('app.env') === 'production') {
         $this->app['url']->forceScheme('https');
+
+        // Set application locale to Arabic
+        App::setLocale('ar');
+
+        // Set Carbon locale to Arabic
+        Carbon::setLocale('ar');
     }
     }
 }
