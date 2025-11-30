@@ -128,5 +128,28 @@
 
     <!-- Page Specific Scripts -->
     @stack('scripts')
+    <!-- Page Specific Scripts -->
+@stack('scripts')
+
+    <!-- Alert Auto-Dismiss Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-20px)';
+
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            }, 4000);
+        });
+    });
+    </script>
+</body>
+</html>
 </body>
 </html>
