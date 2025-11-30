@@ -75,6 +75,7 @@ class BusinessModelController extends Controller
         $user = Auth::user();
         // التحقق من صحة البيانات
         $validated = $request->validate([
+            'project_name' => 'required|string',
             'value_proposition' => 'required|string',
             'age_group' => 'nullable|string',
             'region' => 'required|string',
@@ -95,15 +96,23 @@ class BusinessModelController extends Controller
             'currency' => 'required|string',
         ]);
 
+
         DB::beginTransaction();
 
         try {
             // 1. إنشاء مشروع جديد لكل نموذج
-            $project = Project::create([
+           $project = Project::create([
                 'user_id' => $user->id,
-                'name' => 'مشروع ' . $user->name . ' - ' . now()->format('Y-m-d H:i'),
+                'name' => $validated['project_name'],  // This will use the form input
                 'description' => 'مشروع تم إنشاؤه تلقائياً'
             ]);
+
+            $project = Project::create([
+                'user_id' => $user->id,
+                'name' => 'مشروع ' . $validated['project_name'] . ' - ' . now()->format('Y-m-d H:i'),
+                'description' => 'مشروع تم إنشاؤه تلقائياً'
+            ]);
+            $project->save();  // Don't forget to save!
 
             // 2. إنشاء نموذج الأعمال
             $businessModel = BusinessModel::create([
@@ -113,6 +122,8 @@ class BusinessModelController extends Controller
                 'is_active' => true,
             ]);
 
+            // إضافة اسم المشروع إلى جدول المشاريع
+            $project->name = 'مشروع ' . $validated['project_name'] . ' - ' . now()->format('Y-m-d H:i');
             // 3. القيمة المضافة (Value Proposition)
             ValueProposition::create([
                 'business_model_id' => $businessModel->id,
@@ -367,6 +378,7 @@ class BusinessModelController extends Controller
 
         // التحقق من صحة البيانات
         $validated = $request->validate([
+            'project_name' => 'required|string|max:255',
             'value_proposition' => 'required|string',
             'age_group' => 'nullable|string',
             'region' => 'required|string',
@@ -396,6 +408,11 @@ class BusinessModelController extends Controller
             if ($oldModel->project->user_id !== $user->id) {
                 abort(403, 'غير مصرح لك بتعديل هذا النموذج');
             }
+
+            // تحديث اسم المشروع في جدول المشاريع
+            $project = $oldModel->project;
+            $project->name = $validated['project_name'];
+            $project->save();
 
             // إلغاء تفعيل النموذج القديم
             $oldModel->is_active = false;
