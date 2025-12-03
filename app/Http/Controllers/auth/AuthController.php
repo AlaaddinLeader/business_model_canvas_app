@@ -24,11 +24,10 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle user registration (Username Only - No Email)
+     * Handle user registration (Username Only)
      */
     public function register(Request $request)
     {
-        // Rate limiting for registration attempts
         $key = 'register-' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
@@ -38,7 +37,6 @@ class AuthController extends Controller
             ]);
         }
 
-        // Validate input - NO EMAIL REQUIRED
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -52,7 +50,7 @@ class AuthController extends Controller
                 'max:50',
                 'min:3',
                 'unique:users,username',
-                'regex:/^[a-zA-Z0-9_]+$/', // Only letters, numbers, underscores
+                'regex:/^[a-zA-Z0-9_]+$/',
                 'not_regex:/[<>"\']/'
             ],
             'password' => [
@@ -67,54 +65,35 @@ class AuthController extends Controller
             ],
         ], [
             'name.required' => 'الاسم مطلوب.',
-            'name.regex' => 'الاسم يمكن أن يحتوي فقط على حروف ومسافات.',
             'username.required' => 'اسم المستخدم مطلوب.',
             'username.min' => 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل.',
-            'username.max' => 'اسم المستخدم يجب ألا يتجاوز 50 حرف.',
-            'username.unique' => 'اسم المستخدم مستخدم بالفعل. اختر اسماً آخر.',
-            'username.regex' => 'اسم المستخدم يمكن أن يحتوي فقط على حروف إنجليزية وأرقام وشرطة سفلية (_).',
+            'username.unique' => 'اسم المستخدم مستخدم بالفعل.',
             'password.required' => 'كلمة المرور مطلوبة.',
             'password.confirmed' => 'كلمة المرور غير متطابقة.',
-            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.',
         ]);
 
         RateLimiter::hit($key, 300);
 
         try {
-            // Create user WITHOUT email
             $user = User::create([
                 'name' => strip_tags($validated['name']),
                 'username' => strtolower(trim($validated['username'])),
-                'email' => null, // No email required
+                'email' => null,
                 'password' => Hash::make($validated['password']),
             ]);
 
-            // Log the user in
             Auth::login($user);
-
-            // Regenerate session
             $request->session()->regenerate();
-
-            // Clear rate limiter
             RateLimiter::clear($key);
-
-            Log::info('User registered successfully', [
-                'user_id' => $user->id,
-                'username' => $user->username
-            ]);
 
             return redirect()->route('dashboard')
                 ->with('success', 'تم إنشاء الحساب بنجاح! مرحباً بك ' . $user->name);
 
         } catch (\Exception $e) {
-            Log::error('Registration error', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
+            Log::error('Registration error', ['error' => $e->getMessage()]);
             return back()
                 ->withInput($request->except('password', 'password_confirmation'))
-                ->withErrors(['error' => 'حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.']);
+                ->withErrors(['error' => 'حدث خطأ أثناء إنشاء الحساب.']);
         }
     }
 
@@ -131,7 +110,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Rate limiting
         $key = 'login-' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
@@ -141,7 +119,6 @@ class AuthController extends Controller
             ]);
         }
 
-        // Validate credentials
         $credentials = $request->validate([
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
@@ -150,7 +127,6 @@ class AuthController extends Controller
             'password.required' => 'كلمة المرور مطلوبة.',
         ]);
 
-        // Sanitize username
         $credentials['username'] = strtolower(trim($credentials['username']));
 
         // Attempt authentication
@@ -168,7 +144,6 @@ class AuthController extends Controller
                 ->with('success', 'مرحباً بعودتك ' . Auth::user()->name . '!');
         }
 
-        // Failed attempt
         RateLimiter::hit($key, 60);
 
         Log::warning('Failed login attempt', [
@@ -211,7 +186,7 @@ class AuthController extends Controller
             ]);
 
             return redirect()->route('login')
-                ->withErrors(['error' => 'حدث خطأ في الاتصال بـ Google. يرجى المحاولة مرة أخرى.']);
+                ->withErrors(['error' => 'حدث خطأ في الاتصال بـ Google.']);
         }
     }
 
@@ -223,10 +198,10 @@ class AuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
 
-            Log::info('Google User Data Received', [
+            Log::info('=== Google OAuth Callback ===', [
                 'name' => $googleUser->getName(),
                 'email' => $googleUser->getEmail(),
-                'id' => $googleUser->getId(),
+                'google_id' => $googleUser->getId(),
             ]);
 
             $email = strtolower(trim($googleUser->getEmail()));
@@ -250,18 +225,20 @@ class AuthController extends Controller
                     $user->avatar = $googleUser->getAvatar();
                     $user->email_verified_at = now();
                     $user->save();
+
+                    Log::info('Updated user with Google data');
                 }
             } else {
                 Log::info('Creating new user from Google');
 
-                // Generate unique username from email
-                $baseUsername = $this->generateUsernameFromEmail($email);
+                // ✅ Generate username from Google name (not email)
+                $baseUsername = $this->generateUsernameFromName($googleUser->getName());
                 $username = $this->ensureUniqueUsername($baseUsername);
 
-                // Create new user
+                // Create user with Google data
                 $user = User::create([
                     'name' => $googleUser->getName(),
-                    'username' => $username,
+                    'username' => $username,  // ✅ From Google name
                     'email' => $email,
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
@@ -269,59 +246,65 @@ class AuthController extends Controller
                     'password' => null,
                 ]);
 
-                Log::info('New user created from Google', [
+                Log::info('New Google user created', [
                     'user_id' => $user->id,
-                    'username' => $username
+                    'name' => $googleUser->getName(),
+                    'username' => $username,
+                    'email' => $email
                 ]);
             }
 
-            // Log in
+            // Log in with remember me
             Auth::login($user, true);
             $request->session()->regenerate();
 
+            Log::info('=== Google Login Successful ===', ['user_id' => $user->id]);
+
             return redirect()->route('dashboard')
-                ->with('success', 'مرحباً بك ' . $user->name . '! تم تسجيل الدخول بنجاح');
-
-        } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
-            Log::error('Invalid State Exception', [
-                'message' => $e->getMessage(),
-            ]);
-
-            $request->session()->forget('state');
-
-            return redirect()->route('login')
-                ->withErrors(['error' => 'انتهت صلاحية الجلسة. يرجى المحاولة مرة أخرى.']);
+                ->with('success', 'مرحباً بك ' . $user->name . '!');
 
         } catch (\Exception $e) {
-            Log::error('Google OAuth Error', [
+            Log::error('=== Google OAuth Error ===', [
+                'error' => get_class($e),
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
             ]);
 
+            $request->session()->forget('state');
+
             return redirect()->route('login')
-                ->withErrors(['error' => 'حدث خطأ أثناء تسجيل الدخول عبر Google.']);
+                ->withErrors(['error' => 'حدث خطأ أثناء تسجيل الدخول عبر Google. يرجى المحاولة مرة أخرى.']);
         }
     }
 
     /**
-     * Generate username from email
+     * ✅ Generate username from Google full name (First + Last name)
+     * Example: "John Doe" → "john_doe"
+     *          "محمد أحمد" → "mohamed_ahmed" (transliterated)
      */
-    private function generateUsernameFromEmail(string $email): string
+    private function generateUsernameFromName(string $fullName): string
     {
-        $username = explode('@', $email)[0];
-        $username = preg_replace('/[^a-zA-Z0-9_]/', '', $username);
-        $username = strtolower($username);
+        // Convert to lowercase and replace spaces with underscores
+        $username = strtolower(trim($fullName));
+        $username = preg_replace('/\s+/', '_', $username);
 
+        // Remove any characters that aren't letters, numbers, or underscores
+        $username = preg_replace('/[^a-z0-9_]/', '', $username);
+
+        // If username is too short or empty, add random string
         if (strlen($username) < 3) {
             $username .= substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 5);
         }
+
+        // Limit to 50 characters
+        $username = substr($username, 0, 50);
 
         return $username;
     }
 
     /**
-     * Ensure username is unique
+     * Ensure username is unique by adding numbers if needed
      */
     private function ensureUniqueUsername(string $baseUsername): string
     {
