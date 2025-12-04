@@ -88,7 +88,6 @@ class AuthController extends Controller
 
             return redirect()->route('dashboard')
                 ->with('success', 'تم إنشاء الحساب بنجاح! مرحباً بك ' . $user->name);
-
         } catch (\Exception $e) {
             Log::error('Registration error', ['error' => $e->getMessage()]);
             return back()
@@ -140,7 +139,7 @@ class AuthController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            return redirect()->intended(route('dashboard'))
+            return redirect()->route('dashboard')
                 ->with('success', 'مرحباً بعودتك ' . Auth::user()->name . '!');
         }
 
@@ -262,7 +261,6 @@ class AuthController extends Controller
 
             return redirect()->route('dashboard')
                 ->with('success', 'مرحباً بك ' . $user->name . '!');
-
         } catch (\Exception $e) {
             Log::error('=== Google OAuth Error ===', [
                 'error' => get_class($e),
